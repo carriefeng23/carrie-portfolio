@@ -1,11 +1,29 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Layout from "../layouts/Layout.astro";
 ---
+<Layout title="Carrie Feng">
+  <h1 class="h1">Hi, I’m Carrie.</h1>
+  <p class="subhead">
+    I’m an Information Science and Environmental Analysis student exploring how data, climate systems, and consumer narratives intersect — from climate risk to how fashion brands communicate sustainability. 
+	I use data + research to turn complex topics into clear, actionable insights.
+  </p>
 
-<Layout>
-	<Welcome />
+  <div class="section-title">Featured (in progress)</div>
+
+  <div class="grid">
+    <div class="card">
+      <p class="card-title">Climate / Data Analysis</p>
+      <p class="card-meta">Case study coming soon</p>
+    </div>
+
+    <div class="card">
+      <p class="card-title">Data Analyst</p>
+      <p class="card-meta">Insights coming soon</p>
+    </div>
+
+    <div class="card">
+      <p class="card-title">Fashion / Product Marketing</p>
+      <p class="card-meta">Teardown + analysis coming soon</p>
+    </div>
+  </div>
 </Layout>

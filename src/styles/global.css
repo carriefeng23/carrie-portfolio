@@ -1,0 +1,108 @@
+:root{
+  --bg: #ffffff;
+  --text: #0f172a;
+  --muted: #475569;
+  --muted2:#64748b;
+  --border:#e2e8f0;
+  --card:#f8fafc;
+  --accent:#7c2d3a;
+}
+.h1{
+  font-family: "Playfair Display", Georgia, serif;
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; background:var(--bg); color:var(--text); }
+body{
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  line-height:1.6;
+}
+
+a{ color:var(--accent); text-decoration:none; }
+a:hover{ text-decoration:underline; }
+
+.container{ max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+.nav{
+  position: sticky;
+  top: 0;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner{
+  display:flex;
+  gap:18px;
+  align-items:center;
+  padding: 14px 0;
+  font-size: 14px;
+}
+.brand{
+  font-weight: 650;
+  letter-spacing: 0.2px;
+  margin-right: 6px;
+  color: var(--text);
+}
+.nav-link{ color: var(--muted); }
+.nav-link:hover{ color: var(--accent); text-decoration:none; }
+
+.main{ padding: 56px 0; }
+
+.h1{
+  font-size: 44px;
+  line-height: 1.1;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+.subhead{
+  margin-top: 14px;
+  font-size: 18px;
+  color: var(--muted);
+  max-width: 62ch;
+}
+
+.section-title{
+  margin-top: 36px;
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted2);
+}
+
+.grid{
+  display:grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.card{
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 16px;
+  padding: 16px;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.card:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(2,6,23,0.08);
+}
+.card-title{ font-weight: 650; margin:0; }
+.card-meta{ margin-top: 6px; font-size: 14px; color: var(--muted2); }
+
+.badge{
+  display:inline-flex;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--muted2);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.row{
+  display:flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
