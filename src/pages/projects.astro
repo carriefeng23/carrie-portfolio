@@ -1,29 +1,29 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { getCollection } from "astro:content";
 
-const projects = [
-  { title: "Mapping climate risk indicators", tags: "Climate · Data Viz", status: "In progress" },
-  { title: "What job postings reveal about analyst roles", tags: "Data · Career", status: "In progress" },
-  { title: "How fashion brands communicate sustainability", tags: "Fashion · Product Marketing", status: "In progress" },
-];
+const projects = await getCollection("projects");
 ---
-<Layout title="Projects | Carrie Feng">
-  <h1 class="h1" style="font-size:34px;">Projects</h1>
-  <p class="subhead">
-    Short case studies in a simple format: context → question → method → insights → so what.
-  </p>
 
-  <div class="grid">
-    {projects.map((p) => (
-      <div class="card">
-        <div class="row">
-          <div>
-            <p class="card-title">{p.title}</p>
-            <p class="card-meta">{p.tags}</p>
-          </div>
-          <span class="badge">{p.status}</span>
-        </div>
-      </div>
-    ))}
-  </div>
+<Layout title="Work">
+  <section style="padding: 64px 0;">
+    <h1 style="font-size: 52px;">My Work</h1>
+    <p style="opacity: 0.75; max-width: 60ch;">
+      Click a project to open the full case study.
+    </p>
+
+    <div class="projects-grid">
+      {projects.map((p) => (
+        <a class="project-card" href={`/projects/${p.slug}`}>
+          <img
+            src={p.data.cover}
+            alt={p.data.title}
+            style="width:100%; border-radius:18px; margin-bottom:12px;"
+          />
+          <h3>{p.data.title}</h3>
+          <p>{p.data.description}</p>
+        </a>
+      ))}
+    </div>
+  </section>
 </Layout>
