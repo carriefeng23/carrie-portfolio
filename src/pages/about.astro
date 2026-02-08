@@ -1,20 +1,29 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import ArtGallery from "../components/ArtGallery.astro";
 ---
+
 <Layout title="About | Carrie Feng">
-  <h1>About</h1>
+  <section class="container" style="padding: 64px 0;">
+    <h1 style="margin-bottom: 24px;">About</h1>
 
-  <p style="margin-top:18px;">
-    I’m interested in how climate, data, and communication intersect in real life. A lot of environmental issues feel distant or abstract, and I like working on ways to make them more concrete. That often means using data analysis or GIS to translate large systems into something people can see, question, and act on.
-  </p>
+    <p style="max-width: 70ch; margin-bottom: 18px;">
+      I'm interested in how we communicate big ideas, especially on closing the gap between large data sets and real life. A lot of datasets on topics like environmental, financial records, etc. can seem distant at first so I work on ways to make them concrete.  
+    </p>
 
-  <p style="margin-top:18px;">
-    I’m also really drawn to product storytelling, especially in design and brand development. I think a lot about how sustainability is communicated, how consumers interpret those messages, and where data can either clarify or complicate the story. I’m curious about the space between what brands say and what their data actually shows, and how design and narrative shape trust.
-  </p>
+    <p style="max-width: 70ch; margin-bottom: 18px;">
+      I'm also drown to product storytelling. I am curious about how brands build trust and how consumers interpret these messages. It's fascinating to look at the gap between what a company says and what their data actually shows.
+    </p>
 
-  <p style="margin-top:14px;">
-    Outside of academics, I like projects that involve observing and documenting. I enjoy traveling, photography, ceramics, and lately picked up running. I’m someone who likes both structure and experimentation, whether that’s building a visualization or simply sketching out an idea.
-
-More generally, I’m motivated by curiosity and impact. I like learning across disciplines, asking a lot of questions, and working on things that connect environmental systems with everyday human experience.
-  </p>
+    <p style="max-width: 70ch; margin-bottom: 36px;">
+      Outside of class, I like projects that involve observing the world.
+      I enjoy traveling, photography, ceramics, and lately picked up running. I’m
+      someone who likes a good balance between structure and experimentation, whether that’s building
+      a visualization by hand or sketching out an idea.
+    </p>
+    <section>
+    
+    <!-- Art Gallery -->
+    <ArtGallery />
+  </section>
 </Layout>
