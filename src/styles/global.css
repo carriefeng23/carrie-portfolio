@@ -165,6 +165,34 @@ html.dark {
   font-weight: 400;
   line-height: 1.75;
 }
+/* ========== Mobile Hero Typography Fix ========== */
+.hero h1 {
+  font-size: clamp(44px, 10vw, 72px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 14px 0 14px;
+}
+
+.kicker {
+  font-size: 13px;
+  line-height: 1.4;
+  letter-spacing: 0.14em;
+  opacity: 0.85;
+}
+
+.lede {
+  font-size: 16px;
+  line-height: 1.75;
+  max-width: 46ch;
+}
+
+/* Make hero spacing feel better on phones */
+@media (max-width: 640px) {
+  .hero {
+    padding: 34px 0 52px;
+    gap: 22px;
+  }
+}
 
 .pills{
   display:flex;
@@ -216,7 +244,15 @@ html.dark {
 }
 
 /* responsive */
+/* ========== Responsive / Mobile ========== */
+
+/* Tablet + down: keep pill nav scrollable */
 @media (max-width: 768px) {
+  .topbar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
   .pill-nav {
     display: flex;
     gap: 10px;
@@ -230,12 +266,63 @@ html.dark {
   .pill-nav::-webkit-scrollbar {
     display: none;
   }
+}
+
+/* Small phones */
+@media (max-width: 640px) {
+  .brand {
+    flex: 1 1 100%;
+  }
 
   .pill-link {
-    padding: 10px 14px;
-    font-size: 14px;
+    padding: 8px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .icon-row {
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 34px 0 52px;
+    gap: 22px;
+  }
+
+  .hero h1 {
+    font-size: clamp(44px, 10vw, 72px);
+    line-height: 1.05;
+    margin: 14px 0 14px;
+  }
+
+  .lede {
+    font-size: 16px;
+    line-height: 1.75;
   }
 }
+
+/* Map embed height on small screens */
+@media (max-width: 600px) {
+  .map-embed iframe {
+    height: 420px;
+  }
+}
+
+/* Masonry columns */
+@media (max-width: 900px) {
+  .masonry {
+    columns: 2;
+  }
+}
+
+@media (max-width: 560px) {
+  .masonry {
+    columns: 1;
+  }
+}
+
 
 
 /* --- Projects grid (Work page) --- */
@@ -382,9 +469,7 @@ html.dark {
   display: block;
 }
 
-@media (max-width: 600px) {
-  .map-embed iframe { height: 420px; }
-}
+
 
 .pdf-embed {
   margin: 18px 0 28px;
@@ -454,13 +539,6 @@ html.dark {
 .masonry{
   columns: 3;
   column-gap: 14px;
-}
-
-@media (max-width: 900px){
-  .masonry{ columns: 2; }
-}
-@media (max-width: 560px){
-  .masonry{ columns: 1; }
 }
 
 .masonry img{
