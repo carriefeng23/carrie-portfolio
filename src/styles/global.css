@@ -58,13 +58,6 @@ body::before{
              hueShift 24s linear infinite;
 }
 
-
-/* =========================
-   Theme color variables
-   ========================= */
-
-
-
 /* Dark theme */
 html.dark {
   --text: rgba(255, 255, 255, 0.92);
@@ -220,10 +213,27 @@ html.dark {
 }
 
 /* responsive */
-@media (max-width: 880px){
-  .hero{ grid-template-columns: 1fr; }
-  .pill-nav{ display:none; } /* optional: hide pill nav on small screens */
+@media (max-width: 768px) {
+  .pill-nav {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding: 6px 2px;
+    max-width: 100%;
+  }
+
+  .pill-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pill-link {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
 }
+
 
 /* --- Projects grid (Work page) --- */
 
