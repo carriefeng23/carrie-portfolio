@@ -137,6 +137,9 @@ html.dark {
 }
 .icon-btn:hover{ color:var(--text); border-color: rgba(255,255,255,0.18); }
 
+.icon-btn {
+  cursor: pointer;
+}
 /* hero */
 .hero{
   padding:54px 0 80px;
