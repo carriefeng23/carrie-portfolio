@@ -781,3 +781,125 @@ html.dark {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.jenga-hero {
+  min-height: 100vh;
+  padding: 4rem 2rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
+  color: #f8fafc;
+}
+
+.jenga-copy {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.jenga-copy h1 {
+  font-size: clamp(2.4rem, 6vw, 5rem);
+  line-height: 1.05;
+  margin: 0.5rem 0 1rem;
+}
+
+.subtext,
+.hint,
+.remaining {
+  opacity: 0.8;
+  max-width: 650px;
+  margin: 0.75rem auto;
+}
+
+.jenga-stage {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: start;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.tower {
+  display: grid;
+  grid-template-columns: repeat(3, 140px);
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.block-face,
+.stacked-block {
+  width: 140px;
+  height: 52px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: linear-gradient(180deg, #f4d7a1 0%, #ddb87a 100%);
+  color: #3b2a18;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: lowercase;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.block-face:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+}
+
+.block.revealed .block-face {
+  background: linear-gradient(180deg, #fef3c7 0%, #fcd34d 100%);
+}
+
+.stack-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  background: #f8fafc;
+  color: #111827;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.stacked-area {
+  text-align: center;
+}
+
+.stacked-label {
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.stack-placeholder {
+  opacity: 0.5;
+}
+
+.stacked-tower {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+@media (min-width: 900px) {
+  .jenga-stage {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+}

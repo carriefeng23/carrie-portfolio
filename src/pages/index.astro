@@ -1,5 +1,24 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import JengaIntro from "../components/JengaIntro";
+---
+
+<Layout title="Carrie Feng">
+  <JengaIntro client:load />
+
+  <section class="hero">
+    <div>
+      <p class="kicker">Information Science · Environmental Analysis</p>
+
+      <h1 class="h1">
+        Hey there! I'm <br />
+        Carrie Feng
+      </h1>
+    </div>
+  </section>
+</Layout>
+---
+import Layout from "../layouts/Layout.astro";
 ---
 <Layout title="Carrie Feng">
   <section class="hero">
