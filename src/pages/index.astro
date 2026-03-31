@@ -1,8 +1,12 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import JengaHero3D from "../components/JengaHero3D";
 ---
+
 <Layout title="Carrie Feng">
-  <section class="hero">
+  <JengaHero3D client:load />
+
+  <section id="about" class="hero">
     <div>
       <p class="kicker">Information Science · Environmental Analysis</p>
 
@@ -25,9 +29,16 @@ import Layout from "../layouts/Layout.astro";
     <div class="portrait-wrap">
       <div class="portrait-glow"></div>
       <div class="portrait">
-        <!-- Put your photo in /public as "portrait.jpg" -->
         <img src="/portrait.jpg" alt="Portrait of Carrie Feng" />
       </div>
     </div>
+  </section>
+
+  <section id="work">
+    <!-- work content -->
+  </section>
+
+  <section id="contact">
+    <!-- contact content -->
   </section>
 </Layout>
