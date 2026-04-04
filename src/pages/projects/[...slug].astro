@@ -4,9 +4,9 @@ import { getCollection } from "astro:content";
 
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
-  return projects.map((p) => ({
-    params: { slug: p.slug },
-    props: { project: p },
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
   }));
 }
 
@@ -15,22 +15,38 @@ const { Content } = await project.render();
 ---
 
 <Layout title={project.data.title}>
-  <section style="padding: 64px 0; max-width: 900px; margin: 0 auto;">
-    <h1 style="font-size: 44px; margin: 0 0 12px;">{project.data.title}</h1>
+  <section style="padding: 64px 0;">
+    <h1 style="font-size: 52px; margin-bottom: 12px;">{project.data.title}</h1>
 
-    {project.data.description && (
-      <p style="opacity: 0.75; margin: 0 0 24px;">
-        {project.data.description}
-      </p>
+    <p style="opacity: 0.75; max-width: 60ch; margin-bottom: 24px;">
+      {project.data.description}
+    </p>
+
+    {project.data.embedUrl && (
+      <div class="embed-frame" style="margin-bottom: 24px;">
+        <iframe
+          src={project.data.embedUrl}
+          title={project.data.title}
+          loading="lazy"
+          allow="fullscreen"
+        ></iframe>
+      </div>
     )}
 
-    {project.data.cover && (
+    {!project.data.embedUrl && project.data.cover && (
       <img
         src={project.data.cover}
         alt={project.data.title}
-        style="width:100%; max-width:900px; border-radius:24px; margin:24px 0;"
-        loading="lazy"
+        style="width: 100%; max-width: 900px; border-radius: 18px; margin-bottom: 28px; display: block;"
       />
+    )}
+
+    {project.data.liveUrl && (
+      <p style="margin: 0 0 28px;">
+        <a href={project.data.liveUrl} target="_blank" rel="noopener noreferrer">
+          Open live app →
+        </a>
+      </p>
     )}
 
     <article class="project-content">
