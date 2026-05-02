@@ -1,16 +1,90 @@
 ---
 import Layout from "../layouts/Layout.astro";
 ---
+
 <Layout title="Contact | Carrie Feng">
-  <h1>Contact</h1>
+  <section class="contact-page reveal">
+    <p class="kicker">Get in touch</p>
+    <h1 class="contact-heading">Let's talk.</h1>
+    <p class="contact-lede">
+      I'm currently looking for internship opportunities in data analytics,
+      sustainability, and product — and I'm always up for a good conversation
+      about data storytelling.
+    </p>
 
-  <p style=margin-top:16px;">
-    You can reach me here:
-  </p>
-
-  <ul style="margin-top:16px;">
-    <li>Email: cf3084@barnard.edu</li>
-    <li>LinkedIn: linkedin.com/in/carrie-feng23/</li>
-  
-  </ul>
+    <div class="contact-links">
+      <a href="mailto:cf3084@barnard.edu" class="contact-item">
+        <span class="contact-label">Email</span>
+        <span class="contact-value">cf3084@barnard.edu</span>
+      </a>
+      <a
+        href="https://www.linkedin.com/in/carrie-feng23"
+        target="_blank"
+        rel="noopener"
+        class="contact-item"
+      >
+        <span class="contact-label">LinkedIn</span>
+        <span class="contact-value">carrie-feng23 →</span>
+      </a>
+      <a href="/resume.pdf" target="_blank" rel="noopener" class="contact-item">
+        <span class="contact-label">Resume</span>
+        <span class="contact-value">Download PDF →</span>
+      </a>
+    </div>
+  </section>
 </Layout>
+
+<style>
+  .contact-page {
+    padding: 80px 0 100px;
+    max-width: 620px;
+  }
+  .contact-heading {
+    font-size: clamp(48px, 10vw, 80px);
+    letter-spacing: -0.04em;
+    line-height: 1.0;
+    margin: 10px 0 24px;
+  }
+  .contact-lede {
+    font-size: 17px;
+    line-height: 1.78;
+    opacity: 0.72;
+    max-width: 52ch;
+    margin: 0 0 52px;
+  }
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .contact-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: inherit;
+    transition: gap 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    gap: 24px;
+  }
+  .contact-item:first-child { border-top: 1px solid var(--border); }
+  .contact-item:hover .contact-value {
+    opacity: 1;
+    transform: translateX(6px);
+  }
+  .contact-label {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    opacity: 0.45;
+    flex-shrink: 0;
+  }
+  .contact-value {
+    font-family: "Playfair Display", serif;
+    font-size: clamp(18px, 3vw, 26px);
+    opacity: 0.85;
+    transition: opacity 0.2s ease, transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+</style>

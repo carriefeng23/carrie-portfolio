@@ -8,6 +8,7 @@ const projects = defineCollection({
     publishDate: z.date(),
     cover: z.string(),
     cta: z.string().optional(),
+    outcome: z.string().optional(),
   }),
 });
 

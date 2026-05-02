@@ -1,87 +1,89 @@
 ---
-title: "Beyond BMI: Predicting Obesity via Lifestyle Analytics"
-description: "A multi-class machine learning model that predicts obesity levels using behavioral data instead of physical metrics."
-tags: ["Machine Learning", "Decision Trees", "Classification", "Public Health", "EDA"]
+title: "Beyond BMI: Predicting Obesity via Behavior"
+description: "Can lifestyle habits predict a person's weight class without knowing their height or weight? I excluded all physical measurements to find out."
+tags: ["Machine Learning", "Decision Trees", "Python", "Public Health", "EDA"]
 publishDate: 2026-02-05
-
-# Cover image shown on the Work / Projects page
 cover: "/projects/obesity/obesity-cover.jpg"
+outcome: "0.73 Macro F1-Score — vegetable consumption and meal frequency ranked above exercise as predictors"
 ---
 
-## Executive Summary
-This project developed a classification decision tree model to predict an individual’s obesity level based on lifestyle behaviors, including diet, transportation habits, and technology use, instead of biological measurements.
+## The Question
 
-By excluding direct physical indicators such as height and weight, the model isolates behavioral risk factors, allowing for more actionable insights relevant to public health interventions.
+BMI is a blunt instrument. It tells you a person's weight category but says nothing about why — and "why" is where useful public health interventions actually live.
+
+I wanted to see how well behavioral data alone could predict obesity level, deliberately stripping out height and weight to force the model to learn from lifestyle rather than tautology.
 
 ---
 
 ## Key Findings
 
-### Behavior Over Biology
-Once Age was accounted for, the most influential predictors of obesity were:
-- Family History of Overweight
-- Frequency of Vegetable Consumption (FCVC)
-- Number of Meals per Day (NCP)
+### Behavior Predicts More Than We Expect
+Once age was controlled for, the three strongest predictors were:
+1. **Family history of overweight** — the strongest single signal, reflecting genetic and environmental inheritance
+2. **Vegetable consumption frequency (FCVC)** — a consistent separator across weight classes
+3. **Number of daily meals (NCP)** — meal structure as a stronger signal than exercise frequency
 
-This confirms that lifestyle and environmental factors play a significant role beyond biological baselines.
+This ranking challenges the dominant "move more" framing in public health messaging. Dietary structure and access appear to matter more.
 
 ### Model Performance
-The optimized Decision Tree Classifier achieved a Macro F1-Score of 0.73, indicating balanced performance across four weight classes despite the class imbalance.
+The optimized Decision Tree Classifier achieved a **Macro F1-Score of 0.73** across four weight classes (Insufficient Weight, Normal, Overweight, Obese), reflecting balanced performance despite class imbalance in the training data.
 
-### Differentiation Difficulty
-The model revealed behavioral overlap between the “Overweight” and “Obese” categories, showing a slight tendency toward false positives, misclassifying overweight individuals as obese. This highlights the gray area in behavioral health classification.
+### Where It Struggled
+The model showed behavioral overlap between the Overweight and Obese categories — a slight tendency to misclassify overweight individuals as obese. This reflects a real ambiguity: the behaviors that produce those two outcomes are genuinely similar, and the boundary between them is not clean.
 
 ---
 
 ## Method
 
-### Preventing Data Leakage
-Height and weight features were explicitly removed to prevent data leakage, since BMI is directly computed from these variables. This forced the model to learn from lifestyle patterns rather than tautological signals.
+**Preventing Data Leakage**
+Height and weight were explicitly removed before modeling. BMI is a mathematical function of those two values, so including them would have made the model trivially accurate and completely useless. The point was to learn from behavior, not to reverse-engineer a formula.
 
-### Modeling & Optimization
-- Implemented a Decision Tree Classifier to capture non-linear relationships between lifestyle behaviors and health outcomes.
-- Used GridSearchCV for hyperparameter tuning.
-- Experiments revealed `max_depth` as the most influential hyperparameter, outweighing effects from `min_samples_split` and `max_features`.
+**Modeling**
+- `DecisionTreeClassifier` (scikit-learn) to capture non-linear behavioral relationships
+- `GridSearchCV` for hyperparameter tuning across `max_depth`, `min_samples_split`, and `max_features`
+- `max_depth` turned out to be the most influential parameter — deeper trees overfit quickly on behavioral data
 
----
-
-## Data Sources & Tools
-
-### Data
-- 2,111 rows with 17 behavioral and demographic features, including:
-  - High-caloric food consumption (FAVC)
-  - Technology use (TUE)
-  - Transportation methods (MTRANS)
-
-### Tools
-- Python
-- Pandas
-- Scikit-Learn
-  - `DecisionTreeClassifier`
-  - `GridSearchCV`
+**Feature Engineering**
+Encoded categorical transport and dietary variables. Normalized continuous features before grid search. Retained the full 17-feature behavioral set rather than reducing, to let the model surface its own importance ranking.
 
 ---
 
-## Why This Matters
-Standard BMI calculators tell you if someone is overweight and this model helps explain why.
+## Data
 
-By identifying Vegetable Consumption (FCVC) as a top-three feature by importance, this analysis provides empirical evidence that effective public health strategies should prioritize nutritional access and dietary quality over relying solely on generic “exercise more” messaging.
+2,111 rows with 17 behavioral and demographic features, including:
+- High-caloric food consumption (FAVC)
+- Technology use per day (TUE)
+- Transportation mode (MTRANS)
+- Smoking status, alcohol consumption, water intake
+- Physical activity frequency (FAF)
 
-This approach reframes obesity as a behavioral and structural issue, not just an individual failure, making the findings directly relevant to policy and health equity initiatives.
+---
+
+## Tools
+Python · Pandas · scikit-learn (`DecisionTreeClassifier`, `GridSearchCV`)
 
 ---
 
 ## Project Deck
+
 <div class="pdf-embed">
   <iframe
     src="/projects/obesity/Obesity-proj.pdf"
-    title="Beyond BMI – Obesity Decision Tree Project"
+    title="Beyond BMI — Obesity Decision Tree Project"
     loading="lazy"
   ></iframe>
 </div>
 
 <p style="margin-top:12px;">
   <a href="/projects/obesity/Obesity-proj.pdf" target="_blank" rel="noreferrer">
-    Open full PDF in a new tab
+    Open full PDF in a new tab →
   </a>
 </p>
+
+---
+
+## Why It Matters
+
+The policy implication is direct: if vegetable consumption and meal structure outrank exercise frequency as predictors, then interventions focused on nutritional access and food environment may be more effective than those focused on activity levels.
+
+This reframes obesity as a structural and behavioral issue — shaped by environment, access, and habit — rather than an individual failure of willpower. That distinction matters for how we design public health campaigns.

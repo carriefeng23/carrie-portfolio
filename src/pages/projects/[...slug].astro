@@ -12,18 +12,29 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await project.render();
+const year = project.data.publishDate.getFullYear();
 ---
 
-<Layout title={project.data.title}>
-  <section style="padding: 64px 0;">
-    <h1 style="font-size: 52px; margin-bottom: 12px;">{project.data.title}</h1>
+<Layout title={`${project.data.title} | Carrie Feng`}>
+  <article class="case-study">
+    <!-- Back link -->
+    <a href="/projects" class="back-link reveal">← All projects</a>
 
-    <p style="opacity: 0.75; max-width: 60ch; margin-bottom: 24px;">
-      {project.data.description}
-    </p>
+    <!-- Header -->
+    <header class="case-header reveal reveal-d1">
+      <p class="kicker">
+        {project.data.tags.slice(0, 3).join(" · ")} · {year}
+      </p>
+      <h1 class="case-title">{project.data.title}</h1>
+      <p class="case-desc">{project.data.description}</p>
+      {project.data.outcome && (
+        <p class="case-outcome">{project.data.outcome}</p>
+      )}
+    </header>
 
-    {project.data.embedUrl && (
-      <div class="embed-frame" style="margin-bottom: 24px;">
+    <!-- Hero media -->
+    {project.data.embedUrl ? (
+      <div class="embed-frame reveal reveal-d2">
         <iframe
           src={project.data.embedUrl}
           title={project.data.title}
@@ -31,26 +42,123 @@ const { Content } = await project.render();
           allow="fullscreen"
         ></iframe>
       </div>
-    )}
-
-    {!project.data.embedUrl && project.data.cover && (
-      <img
-        src={project.data.cover}
-        alt={project.data.title}
-        style="width: 100%; max-width: 900px; border-radius: 18px; margin-bottom: 28px; display: block;"
-      />
-    )}
+    ) : project.data.cover ? (
+      <div class="case-cover reveal reveal-d2">
+        <img src={project.data.cover} alt={project.data.title} />
+      </div>
+    ) : null}
 
     {project.data.liveUrl && (
-      <p style="margin: 0 0 28px;">
-        <a href={project.data.liveUrl} target="_blank" rel="noopener noreferrer">
+      <p class="case-live reveal reveal-d3">
+        <a href={project.data.liveUrl} target="_blank" rel="noopener noreferrer" class="btn-primary">
           Open live app →
         </a>
       </p>
     )}
 
-    <article class="project-content">
+    <!-- Case study body -->
+    <div class="project-content reveal reveal-d2">
       <Content />
-    </article>
-  </section>
+    </div>
+  </article>
 </Layout>
+
+<style>
+  .case-study {
+    padding: 56px 0 96px;
+    max-width: 860px;
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    margin-bottom: 40px;
+    transition: color 0.2s ease, transform 0.28s cubic-bezier(0.16,1,0.3,1);
+  }
+  .back-link:hover {
+    color: var(--text);
+    transform: translateX(-4px);
+  }
+  .case-header { margin-bottom: 36px; }
+  .case-title {
+    font-family: "Playfair Display", serif;
+    font-size: clamp(36px, 6vw, 60px);
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+    margin: 10px 0 16px;
+  }
+  .case-desc {
+    font-size: 17px;
+    line-height: 1.72;
+    opacity: 0.7;
+    max-width: 58ch;
+    margin: 0 0 10px;
+  }
+  .case-outcome {
+    font-size: 14px;
+    font-style: italic;
+    opacity: 0.75;
+    margin: 0;
+    max-width: 58ch;
+  }
+  .case-cover {
+    margin: 0 0 32px;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .case-cover img {
+    width: 100%;
+    display: block;
+    height: auto;
+  }
+  .case-live { margin: 0 0 32px; }
+
+  /* Markdown content typography */
+  .project-content {
+    margin-top: 48px;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  .project-content h2 {
+    font-family: "Playfair Display", serif;
+    font-size: clamp(22px, 3vw, 30px);
+    letter-spacing: -0.02em;
+    margin: 52px 0 14px;
+  }
+  .project-content h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 28px 0 8px;
+    opacity: 0.9;
+  }
+  .project-content p {
+    margin: 0 0 18px;
+    opacity: 0.8;
+    max-width: 66ch;
+  }
+  .project-content ul,
+  .project-content ol {
+    padding-left: 20px;
+    margin: 0 0 18px;
+    opacity: 0.8;
+  }
+  .project-content li { margin-bottom: 6px; }
+  .project-content hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+  .project-content strong { opacity: 1; color: var(--text); }
+  .project-content a {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.9;
+  }
+</style>

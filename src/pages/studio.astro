@@ -1,0 +1,41 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ArtGallery from "../components/ArtGallery.astro";
+import JengaHero3D from "../components/JengaHero3D";
+---
+
+<Layout title="Studio | Carrie Feng">
+  <section class="studio-intro reveal">
+    <p class="kicker">Studio</p>
+    <h1 class="studio-heading">Where data ends<br />and making begins</h1>
+    <p class="studio-sub">Photography, ceramics, sculpture — and an interactive game about what keeps things standing.</p>
+  </section>
+
+  <JengaHero3D client:visible />
+
+  <section class="container" style="padding: 0 0 72px;">
+    <ArtGallery />
+  </section>
+</Layout>
+
+<style>
+  .studio-intro {
+    padding: 72px 0 56px;
+    border-top: 2px solid var(--text);
+    max-width: 680px;
+  }
+  .studio-heading {
+    font-family: "Playfair Display", serif;
+    font-size: clamp(36px, 6vw, 60px);
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+    margin: 10px 0 20px;
+  }
+  .studio-sub {
+    font-size: 16px;
+    line-height: 1.8;
+    opacity: 0.65;
+    max-width: 52ch;
+    margin: 0;
+  }
+</style>

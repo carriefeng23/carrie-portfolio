@@ -407,9 +407,6 @@ export default function JengaHero3D() {
           </p>
         )}
 
-        <a href="#about" className="scroll-link">
-          Scroll to explore ↓
-        </a>
       </div>
 
       <div className="tower-3d-wrap">

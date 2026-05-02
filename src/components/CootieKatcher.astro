@@ -1,0 +1,270 @@
+---
+const sections = [
+  {
+    id: "top",
+    c1: "#7c2d3a",
+    c2: "#c06878",
+    fortune: "I find the gap between what data says and what we tend to assume."
+  },
+  {
+    id: "right",
+    c1: "#1e4060",
+    c2: "#4a80a0",
+    fortune: "Ceramics, photography, sculpture — I make things with my hands too."
+  },
+  {
+    id: "bottom",
+    c1: "#1e401e",
+    c2: "#5a8a5a",
+    fortune: "Picked up running recently. Mostly an excuse to think quietly."
+  },
+  {
+    id: "left",
+    c1: "#5a3a0a",
+    c2: "#9a8030",
+    fortune: "Barnard College, Class of 2026. Open to internships in data & sustainability."
+  },
+];
+---
+
+<div class="cc-wrap">
+  <div class="cc" id="cc" data-phase="closed">
+    {sections.map(s => (
+      <button
+        class={`cc-tri cc-t-${s.id}`}
+        data-fortune={s.fortune}
+        style={`--c1:${s.c1};--c2:${s.c2}`}
+        type="button"
+        tabindex="-1"
+      ></button>
+    ))}
+
+    <svg class="cc-lines" viewBox="0 0 280 280" aria-hidden="true">
+      <line x1="0"   y1="0"   x2="280" y2="280"/>
+      <line x1="280" y1="0"   x2="0"   y2="280"/>
+      <rect x="0.5"  y="0.5"  width="279" height="279"/>
+    </svg>
+
+    <div class="cc-nub" aria-hidden="true">CF</div>
+  </div>
+
+  <p class="cc-hint" id="ccHint">click to open</p>
+  <p class="cc-fortune" id="ccFortune"></p>
+</div>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const cc    = document.getElementById("cc") as HTMLElement | null;
+    if (!cc) return;
+    const hint  = document.getElementById("ccHint")    as HTMLElement;
+    const fortEl= document.getElementById("ccFortune") as HTMLElement;
+    const tris  = cc.querySelectorAll<HTMLElement>(".cc-tri");
+
+    type Phase = "closed" | "open1" | "open2" | "revealed";
+    let phase: Phase = "closed";
+    let animating = false;
+
+    const hints: Record<Phase, string> = {
+      closed:   "click to open",
+      open1:    "click again for the other side",
+      open2:    "pick a color",
+      revealed: "click anywhere to reset",
+    };
+
+    function transition(next: Phase, axis: "x" | "y") {
+      if (animating) return;
+      animating = true;
+
+      const cls = axis === "x" ? "fold-x" : "fold-y";
+      cc.classList.add(cls);
+
+      // swap colors at the "squished" midpoint
+      setTimeout(() => {
+        phase = next;
+        cc.dataset.phase = next;
+        hint.textContent = hints[next];
+        // make triangles clickable only in open2
+        tris.forEach(t => {
+          t.tabIndex = next === "open2" ? 0 : -1;
+        });
+      }, 170);
+
+      setTimeout(() => {
+        cc.classList.remove(cls);
+        animating = false;
+      }, 380);
+    }
+
+    cc.addEventListener("click", (e) => {
+      const tri = (e.target as Element).closest<HTMLElement>(".cc-tri");
+
+      if (phase === "closed") {
+        transition("open1", "y");
+
+      } else if (phase === "open1") {
+        transition("open2", "x");
+
+      } else if (phase === "open2") {
+        if (tri) {
+          // reveal fortune for this colour
+          phase = "revealed";
+          cc.dataset.phase = "revealed";
+          tris.forEach(t => t.classList.remove("is-picked"));
+          tri.classList.add("is-picked");
+          fortEl.textContent  = tri.dataset.fortune ?? "";
+          fortEl.classList.add("is-visible");
+          hint.textContent = hints.revealed;
+          tris.forEach(t => { t.tabIndex = -1; });
+        } else {
+          // clicked background — reset
+          transition("closed", "y");
+          tris.forEach(t => t.classList.remove("is-picked"));
+          fortEl.textContent = "";
+          fortEl.classList.remove("is-visible");
+        }
+
+      } else if (phase === "revealed") {
+        // reset
+        tris.forEach(t => t.classList.remove("is-picked"));
+        fortEl.classList.remove("is-visible");
+        setTimeout(() => { fortEl.textContent = ""; }, 350);
+        transition("closed", "x");
+      }
+    });
+  });
+</script>
+
+<style>
+  /* ── Wrapper ───────────────────────────────────────────────── */
+  .cc-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    user-select: none;
+  }
+
+  /* ── The cootie: a square rotated 45° = diamond ───────────── */
+  .cc {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    transform: rotate(45deg);
+    cursor: pointer;
+    filter: drop-shadow(0 8px 28px rgba(0,0,0,0.38));
+  }
+
+  /* ── Fold animations (squish on Y or X to mimic paper fold) ── */
+  @keyframes fold-y {
+    0%   { transform: rotate(45deg) scaleY(1); }
+    46%  { transform: rotate(45deg) scaleY(0.04); }
+    54%  { transform: rotate(45deg) scaleY(0.04); }
+    100% { transform: rotate(45deg) scaleY(1); }
+  }
+  @keyframes fold-x {
+    0%   { transform: rotate(45deg) scaleX(1); }
+    46%  { transform: rotate(45deg) scaleX(0.04); }
+    54%  { transform: rotate(45deg) scaleX(0.04); }
+    100% { transform: rotate(45deg) scaleX(1); }
+  }
+  .cc.fold-y { animation: fold-y 0.38s cubic-bezier(0.4,0,0.2,1) forwards; }
+  .cc.fold-x { animation: fold-x 0.38s cubic-bezier(0.4,0,0.2,1) forwards; }
+
+  /* ── Four triangular sections ──────────────────────────────── */
+  .cc-tri {
+    position: absolute;
+    inset: 0;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: filter 0.22s ease, opacity 0.3s ease;
+  }
+  .cc-t-top    { clip-path: polygon(0% 0%, 100% 0%, 50% 50%); }
+  .cc-t-right  { clip-path: polygon(100% 0%, 100% 100%, 50% 50%); }
+  .cc-t-bottom { clip-path: polygon(100% 100%, 0% 100%, 50% 50%); }
+  .cc-t-left   { clip-path: polygon(0% 100%, 0% 0%, 50% 50%); }
+
+  /* ── Paper look (closed state) ─────────────────────────────── */
+  [data-phase="closed"] .cc-t-top    { background: linear-gradient(135deg, #f5f0e4 0%, #e4ddd0 100%); }
+  [data-phase="closed"] .cc-t-right  { background: linear-gradient(225deg, #ede8db 0%, #ddd5c8 100%); }
+  [data-phase="closed"] .cc-t-bottom { background: linear-gradient(315deg, #f5f0e4 0%, #e4ddd0 100%); }
+  [data-phase="closed"] .cc-t-left   { background: linear-gradient( 45deg, #ede8db 0%, #ddd5c8 100%); }
+
+  /* ── Open-1: first colour set ──────────────────────────────── */
+  [data-phase="open1"] .cc-tri { background: var(--c1); }
+  [data-phase="open1"] .cc-tri:hover { filter: brightness(1.18); }
+
+  /* ── Open-2: second colour set (pick one) ──────────────────── */
+  [data-phase="open2"] .cc-tri { background: var(--c2); }
+  [data-phase="open2"] .cc-tri:hover { filter: brightness(1.22); }
+
+  /* ── Revealed: dim others, highlight picked ─────────────────── */
+  [data-phase="revealed"] .cc-tri            { background: var(--c2); opacity: 0.25; }
+  [data-phase="revealed"] .cc-tri.is-picked  { opacity: 1; filter: brightness(1.15); }
+
+  /* ── Fold-crease lines (SVG overlay) ────────────────────────── */
+  .cc-lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    fill: none;
+    stroke-width: 1;
+    z-index: 1;
+  }
+  [data-phase="closed"]   .cc-lines { stroke: rgba(140, 128, 110, 0.55); }
+  [data-phase="open1"]    .cc-lines { stroke: rgba(255,255,255,0.14); }
+  [data-phase="open2"]    .cc-lines { stroke: rgba(255,255,255,0.14); }
+  [data-phase="revealed"] .cc-lines { stroke: rgba(255,255,255,0.08); }
+
+  /* ── Centre monogram ─────────────────────────────────────────── */
+  .cc-nub {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent, #b83050);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #fff;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* ── Hint line ───────────────────────────────────────────────── */
+  .cc-hint {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
+    opacity: 0.38;
+    margin: 0;
+  }
+
+  /* ── Fortune text ────────────────────────────────────────────── */
+  .cc-fortune {
+    font-family: "Playfair Display", serif;
+    font-style: italic;
+    font-size: 13px;
+    line-height: 1.72;
+    text-align: center;
+    max-width: 260px;
+    min-height: 2.8em;
+    margin: 0;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .cc-fortune.is-visible {
+    opacity: 0.86;
+    transform: translateY(0);
+  }
+</style>

@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { ClientRouter } from 'astro:transitions';
 
 const { title = "Carrie Feng" } = Astro.props;
 ---
@@ -15,13 +16,14 @@ const { title = "Carrie Feng" } = Astro.props;
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
-    
+
+    <ClientRouter />
+
     <script is:inline>
       (function () {
-        const saved = localStorage.getItem("theme"); // "light" | "dark"
+        const saved = localStorage.getItem("theme");
         const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
         const theme = saved ?? (prefersLight ? "light" : "dark");
-
         if (theme === "light") {
           document.documentElement.classList.add("light");
         } else {
@@ -29,56 +31,74 @@ const { title = "Carrie Feng" } = Astro.props;
         }
       })();
     </script>
-
-
   </head>
   <body>
-    <header class="container topbar">
-      <a href="/" class="brand">
-  
-        <span>Carrie Feng</span>
-      </a>
+    <div class="topbar-outer" id="topbarOuter">
+      <header class="container topbar">
+        <a href="/" class="brand">
+          <span>Carrie Feng</span>
+        </a>
 
+        <nav class="pill-nav">
+          <a class={`pill-link ${Astro.url.pathname === "/" ? "active" : ""}`} href="/">Home</a>
+          <a class={`pill-link ${Astro.url.pathname.startsWith("/projects") ? "active" : ""}`} href="/projects">Work</a>
+          <a class={`pill-link ${Astro.url.pathname.startsWith("/studio") ? "active" : ""}`} href="/studio">Studio</a>
+          <a class={`pill-link ${Astro.url.pathname.startsWith("/contact") ? "active" : ""}`} href="/contact">Contact</a>
+        </nav>
 
-      <nav class="pill-nav">
-        <a class={`pill-link ${Astro.url.pathname === "/" ? "active" : ""}`} href="/">Home</a>
-        <a class={`pill-link ${Astro.url.pathname.startsWith("/projects") ? "active" : ""}`} href="/projects">Work</a>
-        <a class={`pill-link ${Astro.url.pathname.startsWith("/about") ? "active" : ""}`} href="/about">About</a>
-        <a class={`pill-link ${Astro.url.pathname.startsWith("/contact") ? "active" : ""}`} href="/contact">Contact</a>
-      </nav>
-
-      <div class="icon-row">
-        
-        <a class="icon-btn" href="https://www.linkedin.com/in/carrie-feng23" target="_blank" rel="noopener" aria-label="LinkedIn">in</a>
-        <a class="icon-btn" href="/resume.pdf" target="_blank" rel="noopener" aria-label="Resume">CV</a>
-        <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">
-          ☾
-        </button>
-
-      </div>
-    </header>
+        <div class="icon-row">
+          <a class="icon-btn" href="https://www.linkedin.com/in/carrie-feng23" target="_blank" rel="noopener" aria-label="LinkedIn">in</a>
+          <a class="icon-btn" href="/resume.pdf" target="_blank" rel="noopener" aria-label="Resume">CV</a>
+          <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">☾</button>
+        </div>
+      </header>
+    </div>
 
     <main class="container">
       <slot />
     </main>
-    <script is:inline>
-      const btn = document.getElementById("themeToggle");
 
-      function syncIcon() {
-        const isLight = document.documentElement.classList.contains("light");
-        btn.textContent = isLight ? "☾" : "☀︎";
-      }
+    <script>
+      // Re-runs on every ClientRouter page transition
+      document.addEventListener('astro:page-load', () => {
+        // Theme toggle
+        const btn = document.getElementById("themeToggle") as HTMLButtonElement | null;
+        if (btn) {
+          const syncIcon = () => {
+            btn.textContent = document.documentElement.classList.contains("light") ? "☾" : "☀︎";
+          };
+          syncIcon();
+          btn.onclick = () => {
+            const isLight = document.documentElement.classList.toggle("light");
+            localStorage.setItem("theme", isLight ? "light" : "dark");
+            syncIcon();
+          };
+        }
 
-      syncIcon();
-
-      btn.addEventListener("click", () => {
-        const html = document.documentElement;
-        const isLight = html.classList.toggle("light");
-        localStorage.setItem("theme", isLight ? "light" : "dark");
-        syncIcon();
+        // Scroll reveal via IntersectionObserver
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.1, rootMargin: "0px 0px -48px 0px" }
+        );
+        document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
       });
+
+      // Sticky nav blur — attaches once, persists across navigations
+      const outer = document.getElementById("topbarOuter");
+      if (outer) {
+        window.addEventListener(
+          "scroll",
+          () => outer.classList.toggle("scrolled", window.scrollY > 24),
+          { passive: true }
+        );
+      }
     </script>
-
-
   </body>
 </html>

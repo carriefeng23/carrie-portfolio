@@ -12,7 +12,7 @@ const items = [
     id: "photo2",
     category: "photography",
     src: "/art/photo/photo2.jpeg",
-    title: "Detailed Project 1",
+    title: "D.C. Spring Afternoon",
     description: ""
   },
   {
@@ -94,6 +94,76 @@ const items = [
     title: "Extracted",
     description: "5 x 5 x 2; stoneware clay, cobalt blue glaze, carving tools, trimming tools; This piece serves as a conceptual protest statement piece, pierced holes cut donut form."
   },
+  {
+    id: "cer10",
+    category: "ceramics",
+    src: "/art/ceramics/ceramics10.png",
+    title: "Blue Vase",
+    description: "Porcelain clay, cone 6, blue rutile glaze."
+  },
+  {
+    id: "cer11",
+    category: "ceramics",
+    src: "/art/ceramics/ceramics11.png",
+    title: "Handmade Bowl",
+    description: "Porcelain clay, 8% mason stains teal, clear glaze."
+  },
+  {
+    id: "cer12",
+    category: "ceramics",
+    src: "/art/ceramics/ceramics12.png",
+    title: "Body Toxins",
+    description: "Red clay, 8% mason stains tangerine and purple, clear glaze, coral glaze, yarn. This piece explores the fragility of our body and how our skin filters out body toxins."
+  },
+  {
+    id: "cer13",
+    category: "ceramics",
+    src: "/art/ceramics/ceramics13.png",
+    title: "Tea Bag Holder",
+    description: "Porcelain slab, blue rutile glaze."
+  },
+  {
+    id: "cer14",
+    category: "ceramics",
+    src: "/art/ceramics/ceramics14.png",
+    title: "Body Toxins (II)",
+    description: "Red clay, 8% mason stains tangerine and purple, clear glaze, coral glaze, yarn. This piece explores the fragility of our body and how our skin filters out body toxins."
+  },
+  {
+    id: "cer15",
+    category: "ceramics",
+    src: "/art/ceramics/ceramics15.png",
+    title: "Body Toxins (III)",
+    description: "Red clay, 8% mason stains tangerine and purple, clear glaze, coral glaze, yarn. This piece explores the fragility of our body and how our skin filters out body toxins."
+  },
+  {
+    id: "cer16",
+    category: "ceramics",
+    src: "/art/ceramics/ceramics16.png",
+    title: "Body Toxins (IV)",
+    description: "Red clay, 8% mason stains tangerine and purple, clear glaze, coral glaze, yarn. This piece explores the fragility of our body and how our skin filters out body toxins."
+  },
+  {
+    id: "cer17",
+    category: "ceramics",
+    src: "/art/ceramics/ceramics17.png",
+    title: "Berry Strainer",
+    description: "Stoneware clay, blue rutile glaze, cone 6."
+  },
+  {
+    id: "cer18",
+    category: "ceramics",
+    src: "/art/ceramics/ceramics18.png",
+    title: "Bedside Water Set — Bottle",
+    description: "Stoneware clay, blue rutile glaze, cone 6. Part of a matched bedside water bottle and cup set."
+  },
+  {
+    id: "cer19",
+    category: "ceramics",
+    src: "/art/ceramics/ceramics19.png",
+    title: "Bedside Water Set — Cup",
+    description: "Stoneware clay, blue rutile glaze, cone 6. Part of a matched bedside water bottle and cup set."
+  },
 
   // Others (sculpture etc.)
   {
@@ -169,46 +239,53 @@ const filters = [
 </section>
 
 <script>
-  const grid = document.getElementById("artGrid");
-  const buttons = document.querySelectorAll(".art-filter");
+  function initGallery() {
+    const grid = document.getElementById("artGrid");
+    if (!grid) return;
 
-  // default filter: all
-  let active = "all";
-  buttons[0]?.classList.add("is-active");
+    const section = grid.closest(".art-wrap");
+    const buttons = section?.querySelectorAll(".art-filter") ?? [];
+    const modal = document.getElementById("artModal");
+    const modalImg = document.getElementById("modalImg");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalDesc = document.getElementById("modalDesc");
+    if (!modal || !modalImg || !modalTitle || !modalDesc) return;
 
-  function applyFilter() {
-    grid.querySelectorAll(".art-card").forEach((card) => {
-      const cat = card.dataset.category;
-      card.style.display = (active === "all" || cat === active) ? "" : "none";
+    let active = "all";
+    buttons[0]?.classList.add("is-active");
+
+    function applyFilter() {
+      grid.querySelectorAll(".art-card").forEach((card) => {
+        const el = card as HTMLElement;
+        el.style.display = (active === "all" || el.dataset.category === active) ? "" : "none";
+      });
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        buttons.forEach((b) => b.classList.remove("is-active"));
+        btn.classList.add("is-active");
+        active = (btn as HTMLElement).dataset.filter ?? "all";
+        applyFilter();
+      });
+    });
+
+    grid.addEventListener("click", (e) => {
+      const card = (e.target as Element).closest(".art-card") as HTMLElement | null;
+      if (!card) return;
+      (modalImg as HTMLImageElement).src = card.dataset.src ?? "";
+      (modalImg as HTMLImageElement).alt = card.dataset.title ?? "";
+      modalTitle.textContent = card.dataset.title ?? "";
+      modalDesc.textContent = card.dataset.description ?? "";
+      (modal as HTMLDialogElement).showModal();
+    });
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) (modal as HTMLDialogElement).close();
     });
   }
 
-  buttons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      buttons.forEach((b) => b.classList.remove("is-active"));
-      btn.classList.add("is-active");
-      active = btn.dataset.filter;
-      applyFilter();
-    });
-  });
-
-  // modal
-  const modal = document.getElementById("artModal");
-  const modalImg = document.getElementById("modalImg");
-  const modalTitle = document.getElementById("modalTitle");
-  const modalDesc = document.getElementById("modalDesc");
-
-  grid.addEventListener("click", (e) => {
-    const card = e.target.closest(".art-card");
-    if (!card) return;
-
-    modalImg.src = card.dataset.src;
-    modalImg.alt = card.dataset.title;
-    modalTitle.textContent = card.dataset.title;
-    modalDesc.textContent = card.dataset.description;
-
-    modal.showModal();
-  });
+  document.addEventListener("astro:page-load", initGallery);
 </script>
 
 <style>
@@ -228,9 +305,9 @@ const filters = [
     font-weight: 600;
   }
   .art-filter.is-active {
-    color: var(--text);
-    background: linear-gradient(135deg, rgba(124,45,58,0.85), rgba(184,50,128,0.65));
-    box-shadow: 0 12px 28px rgba(124,45,58,0.22);
+    color: #fff;
+    background: var(--accent);
+    box-shadow: none;
   }
 
   .art-grid {

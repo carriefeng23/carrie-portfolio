@@ -3,27 +3,62 @@ import Layout from "../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 
 const projects = await getCollection("projects");
+const sorted = [...projects].sort(
+  (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime()
+);
 ---
 
-<Layout title="Work">
-  <section style="padding: 64px 0;">
-    <h1 style="font-size: 52px;">My Work</h1>
-    <p style="opacity: 0.75; max-width: 60ch;">
-      Click a project to open the full case study.
-    </p>
+<Layout title="Work | Carrie Feng">
+  <section style="padding: 72px 0 0;">
+    <div class="reveal">
+      <p class="kicker">Portfolio</p>
+      <h1 class="work-heading">My Work</h1>
+      <p class="work-sub">
+        Each project started with a question I couldn't stop thinking about.
+        Click through for the full story.
+      </p>
+    </div>
 
-    <div class="projects-grid">
-      {projects.map((p) => (
-        <a class="project-card" href={`/projects/${p.slug}`}>
-          <img
-            src={p.data.cover}
-            alt={p.data.title}
-            style="width:100%; border-radius:18px; margin-bottom:12px;"
-          />
-          <h3>{p.data.title}</h3>
-          <p>{p.data.description}</p>
+    <div class="project-list">
+      {sorted.map((p, i) => (
+        <a
+          class="project-row reveal"
+          href={`/projects/${p.slug}`}
+          style={`transition-delay: ${i * 0.08}s`}
+        >
+          <div class="project-row-img">
+            <img src={p.data.cover} alt={p.data.title} loading="lazy" />
+          </div>
+          <div class="project-row-info">
+            <p class="project-row-tags">
+              {[...p.data.tags.slice(0, 3), String(p.data.publishDate.getFullYear())].join(" · ")}
+            </p>
+            <h2 class="project-row-title">{p.data.title}</h2>
+            <p class="project-row-desc">{p.data.description}</p>
+            {p.data.outcome && (
+              <p class="project-row-outcome">{p.data.outcome}</p>
+            )}
+            <span class="project-row-cta">View case study →</span>
+          </div>
         </a>
       ))}
     </div>
   </section>
 </Layout>
+
+<style>
+  .work-heading {
+    font-family: "Playfair Display", serif;
+    font-size: clamp(40px, 8vw, 68px);
+    letter-spacing: -0.03em;
+    margin: 10px 0 14px;
+    line-height: 1.05;
+  }
+  .work-sub {
+    opacity: 0.6;
+    max-width: 52ch;
+    font-size: 16px;
+    line-height: 1.72;
+    margin: 0 0 16px;
+  }
+</style>
