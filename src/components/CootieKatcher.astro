@@ -1,256 +1,236 @@
----
-const sections = [
-  {
-    id: "top",
-    c1: "#7c2d3a",
-    c2: "#c06878",
-    fortune: "I find the gap between what data says and what we tend to assume."
-  },
-  {
-    id: "right",
-    c1: "#1e4060",
-    c2: "#4a80a0",
-    fortune: "Ceramics, photography, sculpture — I make things with my hands too."
-  },
-  {
-    id: "bottom",
-    c1: "#1e401e",
-    c2: "#5a8a5a",
-    fortune: "Picked up running recently. Mostly an excuse to think quietly."
-  },
-  {
-    id: "left",
-    c1: "#5a3a0a",
-    c2: "#9a8030",
-    fortune: "Barnard College, Class of 2026. Open to internships in data & sustainability."
-  },
-];
----
-
-<div class="cc-wrap">
-  <div class="cc" id="cc" data-phase="closed">
-    {sections.map(s => (
-      <button
-        class={`cc-tri cc-t-${s.id}`}
-        data-fortune={s.fortune}
-        style={`--c1:${s.c1};--c2:${s.c2}`}
-        type="button"
-        tabindex="-1"
-      ></button>
-    ))}
-
-    <svg class="cc-lines" viewBox="0 0 280 280" aria-hidden="true">
-      <line x1="0"   y1="0"   x2="280" y2="280"/>
-      <line x1="280" y1="0"   x2="0"   y2="280"/>
-      <rect x="0.5"  y="0.5"  width="279" height="279"/>
-    </svg>
-
-    <div class="cc-nub" aria-hidden="true">CF</div>
-  </div>
-
-  <p class="cc-hint" id="ccHint">click to open</p>
-  <p class="cc-fortune" id="ccFortune"></p>
+<div class="sys-wrap">
+  <canvas id="sys-canvas" aria-label="Orbiting traits — hover a planet to explore, click to read"></canvas>
+  <p class="sys-label" id="sysLabel" data-state="hint">hover a planet</p>
+  <p class="sys-quote" id="sysQuote"></p>
 </div>
 
 <script>
-  document.addEventListener("astro:page-load", () => {
-    const cc    = document.getElementById("cc") as HTMLElement | null;
-    if (!cc) return;
-    const hint  = document.getElementById("ccHint")    as HTMLElement;
-    const fortEl= document.getElementById("ccFortune") as HTMLElement;
-    const tris  = cc.querySelectorAll<HTMLElement>(".cc-tri");
+  const PLANETS = [
+    { label: 'CURIOUS',    quote: "I came to GIS, ceramics, and running the same way — I wanted to understand something I couldn't yet.",                              r: 44,  speed: 0.009,  angle: 0.5,  size: 6   },
+    { label: 'SKEPTICAL',  quote: "Luxury brands in my dataset scored lower on supply chain transparency than H&M. That was not what I expected.",                    r: 66,  speed: 0.006,  angle: 2.1,  size: 4   },
+    { label: 'EMPATHETIC', quote: "Seeing transit deserts on a map is different from reading them in a table. A good visualization changes what you think to ask.",   r: 85,  speed: 0.004,  angle: 3.8,  size: 6   },
+    { label: 'CREATIVE',   quote: "I shoot film when I want to slow down. I throw clay when I want to stop thinking. I make maps when both fail.",                    r: 104, speed: 0.003,  angle: 1.0,  size: 4   },
+    { label: 'RESILIENT',  quote: "The pottery wheel doesn't care how smart you are. It just keeps spinning until you figure it out.",                                r: 122, speed: 0.002,  angle: 4.5,  size: 5.5 },
+    { label: 'OBSERVANT',  quote: "I notice when the numbers don't match the narrative. That's true of data and of people.",                                           r: 138, speed: 0.0014, angle: 2.8,  size: 4   },
+    { label: 'GROUNDED',   quote: "Ceramics, running, film — I keep coming back to things that are slow and physical. They remind me what real work feels like.",      r: 153, speed: 0.001,  angle: 1.5,  size: 5   },
+  ];
 
-    type Phase = "closed" | "open1" | "open2" | "revealed";
-    let phase: Phase = "closed";
-    let animating = false;
+  let rafId: number | null = null;
 
-    const hints: Record<Phase, string> = {
-      closed:   "click to open",
-      open1:    "click again for the other side",
-      open2:    "pick a color",
-      revealed: "click anywhere to reset",
-    };
+  document.addEventListener('astro:before-preparation', () => {
+    if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+  });
 
-    function transition(next: Phase, axis: "x" | "y") {
-      if (animating) return;
-      animating = true;
+  document.addEventListener('astro:page-load', () => {
+    const canvas = document.getElementById('sys-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return;
 
-      const cls = axis === "x" ? "fold-x" : "fold-y";
-      cc.classList.add(cls);
+    const ctx = canvas.getContext('2d')!;
+    const SIZE = 340;
+    const dpr  = window.devicePixelRatio || 1;
+    canvas.width  = SIZE * dpr;
+    canvas.height = SIZE * dpr;
+    canvas.style.width  = SIZE + 'px';
+    canvas.style.height = SIZE + 'px';
+    ctx.scale(dpr, dpr);
 
-      // swap colors at the "squished" midpoint
-      setTimeout(() => {
-        phase = next;
-        cc.dataset.phase = next;
-        hint.textContent = hints[next];
-        // make triangles clickable only in open2
-        tris.forEach(t => {
-          t.tabIndex = next === "open2" ? 0 : -1;
-        });
-      }, 170);
+    const cx = SIZE / 2, cy = SIZE / 2;
 
-      setTimeout(() => {
-        cc.classList.remove(cls);
-        animating = false;
-      }, 380);
+    // Mutable per-frame state for each planet
+    const planets = PLANETS.map(p => ({ ...p, curSpeed: p.speed }));
+
+    let hoveredIdx   = -1;
+    let clickedIdx   = -1;
+    let lastHovIdx   = -2; // sentinel so first frame always syncs DOM
+    let mouseX = -999, mouseY = -999;
+
+    const labelEl = document.getElementById('sysLabel') as HTMLElement | null;
+    const quoteEl = document.getElementById('sysQuote') as HTMLElement | null;
+
+    const getAccent = () =>
+      getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#b83050';
+    const isDark = () => !document.documentElement.classList.contains('light');
+    const lerp   = (a: number, b: number, t: number) => a + (b - a) * t;
+
+    function planetPos(p: typeof planets[0]) {
+      return { x: cx + Math.cos(p.angle) * p.r, y: cy + Math.sin(p.angle) * p.r };
     }
 
-    cc.addEventListener("click", (e) => {
-      const tri = (e.target as Element).closest<HTMLElement>(".cc-tri");
+    function hitTest(p: typeof planets[0]) {
+      const pos  = planetPos(p);
+      const rect = canvas.getBoundingClientRect();
+      const dx   = mouseX - rect.left - pos.x;
+      const dy   = mouseY - rect.top  - pos.y;
+      return Math.hypot(dx, dy) < Math.max(p.size + 8, 14);
+    }
 
-      if (phase === "closed") {
-        transition("open1", "y");
+    function draw() {
+      const accent = getAccent();
+      const dark   = isDark();
+      const orbitC = dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)';
+      const dotC   = dark ? 'rgba(240,237,232,0.42)' : 'rgba(15,10,10,0.36)';
 
-      } else if (phase === "open1") {
-        transition("open2", "x");
+      ctx.clearRect(0, 0, SIZE, SIZE);
 
-      } else if (phase === "open2") {
-        if (tri) {
-          // reveal fortune for this colour
-          phase = "revealed";
-          cc.dataset.phase = "revealed";
-          tris.forEach(t => t.classList.remove("is-picked"));
-          tri.classList.add("is-picked");
-          fortEl.textContent  = tri.dataset.fortune ?? "";
-          fortEl.classList.add("is-visible");
-          hint.textContent = hints.revealed;
-          tris.forEach(t => { t.tabIndex = -1; });
-        } else {
-          // clicked background — reset
-          transition("closed", "y");
-          tris.forEach(t => t.classList.remove("is-picked"));
-          fortEl.textContent = "";
-          fortEl.classList.remove("is-visible");
+      // Orbital paths (dashed)
+      ctx.setLineDash([3, 5]);
+      ctx.lineWidth = 1;
+      planets.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(cx, cy, p.r, 0, Math.PI * 2);
+        ctx.strokeStyle = orbitC;
+        ctx.stroke();
+      });
+      ctx.setLineDash([]);
+
+      // Planet dots
+      planets.forEach((p, i) => {
+        const pos    = planetPos(p);
+        const isHov  = i === hoveredIdx;
+        const isSel  = i === clickedIdx;
+
+        // Halo for hovered / selected
+        if (isHov || isSel) {
+          ctx.beginPath();
+          ctx.arc(pos.x, pos.y, p.size + 6, 0, Math.PI * 2);
+          ctx.fillStyle = accent + '28';
+          ctx.fill();
         }
 
-      } else if (phase === "revealed") {
-        // reset
-        tris.forEach(t => t.classList.remove("is-picked"));
-        fortEl.classList.remove("is-visible");
-        setTimeout(() => { fortEl.textContent = ""; }, 350);
-        transition("closed", "x");
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = (isHov || isSel) ? accent : dotC;
+        ctx.fill();
+      });
+
+      // Center sun — outer glow
+      ctx.beginPath();
+      ctx.arc(cx, cy, 20, 0, Math.PI * 2);
+      ctx.fillStyle = accent + '22';
+      ctx.fill();
+      // Sun core
+      ctx.beginPath();
+      ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+      ctx.fillStyle = accent;
+      ctx.fill();
+      // CF monogram
+      ctx.textAlign    = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font         = 'bold 6px "Inter", system-ui, sans-serif';
+      ctx.fillStyle    = '#fff';
+      ctx.fillText('CF', cx, cy);
+    }
+
+    function syncLabel() {
+      if (hoveredIdx === lastHovIdx) return;
+      lastHovIdx = hoveredIdx;
+      if (!labelEl) return;
+
+      if (hoveredIdx >= 0) {
+        labelEl.textContent  = '⬤  ' + planets[hoveredIdx].label;
+        labelEl.dataset.state = 'name';
+      } else {
+        labelEl.textContent  = 'hover a planet';
+        labelEl.dataset.state = 'hint';
+      }
+    }
+
+    function frame() {
+      // Hit test
+      hoveredIdx = -1;
+      planets.forEach((p, i) => { if (hitTest(p)) hoveredIdx = i; });
+
+      // Update speeds + angles
+      planets.forEach((p, i) => {
+        p.curSpeed = lerp(p.curSpeed, i === hoveredIdx ? 0 : p.speed, 0.08);
+        p.angle   += p.curSpeed;
+      });
+
+      canvas.style.cursor = hoveredIdx >= 0 ? 'pointer' : 'default';
+      syncLabel();
+      draw();
+      rafId = requestAnimationFrame(frame);
+    }
+
+    // ── Events ──
+    canvas.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+    canvas.addEventListener('mouseleave', () => { mouseX = -999; mouseY = -999; });
+
+    canvas.addEventListener('click', () => {
+      if (hoveredIdx < 0) return;
+      if (clickedIdx === hoveredIdx) {
+        clickedIdx = -1;
+        quoteEl?.classList.remove('is-visible');
+      } else {
+        clickedIdx = hoveredIdx;
+        if (quoteEl) {
+          quoteEl.textContent = planets[clickedIdx].quote;
+          quoteEl.classList.add('is-visible');
+        }
       }
     });
+
+    // Touch tap — find nearest planet and reveal quote
+    canvas.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      const touch = e.changedTouches[0];
+      const rect  = canvas.getBoundingClientRect();
+      const tx    = touch.clientX - rect.left;
+      const ty    = touch.clientY - rect.top;
+
+      let nearest = -1, nearestDist = 24;
+      planets.forEach((p, i) => {
+        const pos  = planetPos(p);
+        const dist = Math.hypot(tx - pos.x, ty - pos.y);
+        if (dist < nearestDist) { nearestDist = dist; nearest = i; }
+      });
+
+      if (nearest >= 0) {
+        clickedIdx = nearest === clickedIdx ? -1 : nearest;
+        if (quoteEl) {
+          if (clickedIdx >= 0) {
+            quoteEl.textContent = planets[clickedIdx].quote;
+            quoteEl.classList.add('is-visible');
+          } else {
+            quoteEl.classList.remove('is-visible');
+          }
+        }
+        if (labelEl && clickedIdx >= 0) {
+          labelEl.textContent   = '⬤  ' + planets[clickedIdx].label;
+          labelEl.dataset.state = 'name';
+        }
+      }
+    }, { passive: false });
+
+    rafId = requestAnimationFrame(frame);
   });
 </script>
 
 <style>
-  /* ── Wrapper ───────────────────────────────────────────────── */
-  .cc-wrap {
+  .sys-wrap {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 18px;
     user-select: none;
   }
 
-  /* ── The cootie: a square rotated 45° = diamond ───────────── */
-  .cc {
-    position: relative;
-    width: 280px;
-    height: 280px;
-    transform: rotate(45deg);
-    cursor: pointer;
-    filter: drop-shadow(0 8px 28px rgba(0,0,0,0.38));
-  }
+  #sys-canvas { display: block; }
 
-  /* ── Fold animations (squish on Y or X to mimic paper fold) ── */
-  @keyframes fold-y {
-    0%   { transform: rotate(45deg) scaleY(1); }
-    46%  { transform: rotate(45deg) scaleY(0.04); }
-    54%  { transform: rotate(45deg) scaleY(0.04); }
-    100% { transform: rotate(45deg) scaleY(1); }
-  }
-  @keyframes fold-x {
-    0%   { transform: rotate(45deg) scaleX(1); }
-    46%  { transform: rotate(45deg) scaleX(0.04); }
-    54%  { transform: rotate(45deg) scaleX(0.04); }
-    100% { transform: rotate(45deg) scaleX(1); }
-  }
-  .cc.fold-y { animation: fold-y 0.38s cubic-bezier(0.4,0,0.2,1) forwards; }
-  .cc.fold-x { animation: fold-x 0.38s cubic-bezier(0.4,0,0.2,1) forwards; }
-
-  /* ── Four triangular sections ──────────────────────────────── */
-  .cc-tri {
-    position: absolute;
-    inset: 0;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    transition: filter 0.22s ease, opacity 0.3s ease;
-  }
-  .cc-t-top    { clip-path: polygon(0% 0%, 100% 0%, 50% 50%); }
-  .cc-t-right  { clip-path: polygon(100% 0%, 100% 100%, 50% 50%); }
-  .cc-t-bottom { clip-path: polygon(100% 100%, 0% 100%, 50% 50%); }
-  .cc-t-left   { clip-path: polygon(0% 100%, 0% 0%, 50% 50%); }
-
-  /* ── Paper look (closed state) ─────────────────────────────── */
-  [data-phase="closed"] .cc-t-top    { background: linear-gradient(135deg, #f5f0e4 0%, #e4ddd0 100%); }
-  [data-phase="closed"] .cc-t-right  { background: linear-gradient(225deg, #ede8db 0%, #ddd5c8 100%); }
-  [data-phase="closed"] .cc-t-bottom { background: linear-gradient(315deg, #f5f0e4 0%, #e4ddd0 100%); }
-  [data-phase="closed"] .cc-t-left   { background: linear-gradient( 45deg, #ede8db 0%, #ddd5c8 100%); }
-
-  /* ── Open-1: first colour set ──────────────────────────────── */
-  [data-phase="open1"] .cc-tri { background: var(--c1); }
-  [data-phase="open1"] .cc-tri:hover { filter: brightness(1.18); }
-
-  /* ── Open-2: second colour set (pick one) ──────────────────── */
-  [data-phase="open2"] .cc-tri { background: var(--c2); }
-  [data-phase="open2"] .cc-tri:hover { filter: brightness(1.22); }
-
-  /* ── Revealed: dim others, highlight picked ─────────────────── */
-  [data-phase="revealed"] .cc-tri            { background: var(--c2); opacity: 0.25; }
-  [data-phase="revealed"] .cc-tri.is-picked  { opacity: 1; filter: brightness(1.15); }
-
-  /* ── Fold-crease lines (SVG overlay) ────────────────────────── */
-  .cc-lines {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    fill: none;
-    stroke-width: 1;
-    z-index: 1;
-  }
-  [data-phase="closed"]   .cc-lines { stroke: rgba(140, 128, 110, 0.55); }
-  [data-phase="open1"]    .cc-lines { stroke: rgba(255,255,255,0.14); }
-  [data-phase="open2"]    .cc-lines { stroke: rgba(255,255,255,0.14); }
-  [data-phase="revealed"] .cc-lines { stroke: rgba(255,255,255,0.08); }
-
-  /* ── Centre monogram ─────────────────────────────────────────── */
-  .cc-nub {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-45deg);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--accent, #b83050);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: #fff;
-    z-index: 2;
-    pointer-events: none;
-  }
-
-  /* ── Hint line ───────────────────────────────────────────────── */
-  .cc-hint {
+  .sys-label {
     font-size: 10px;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     font-weight: 700;
-    opacity: 0.38;
     margin: 0;
+    min-height: 1.2em;
+    text-align: center;
+    transition: color 0.2s ease, opacity 0.2s ease;
   }
+  .sys-label[data-state="hint"] { opacity: 0.35; color: var(--text); }
+  .sys-label[data-state="name"] { opacity: 1;    color: var(--accent); }
 
-  /* ── Fortune text ────────────────────────────────────────────── */
-  .cc-fortune {
+  .sys-quote {
     font-family: "Playfair Display", serif;
     font-style: italic;
     font-size: 13px;
@@ -263,7 +243,7 @@ const sections = [
     transform: translateY(6px);
     transition: opacity 0.35s ease, transform 0.35s ease;
   }
-  .cc-fortune.is-visible {
+  .sys-quote.is-visible {
     opacity: 0.86;
     transform: translateY(0);
   }

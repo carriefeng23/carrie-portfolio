@@ -1,192 +1,83 @@
 ---
-const items = [
-  // Photography
-  {
-    id: "photo1",
-    category: "photography",
-    src: "/art/photo/photo1.jpeg",
-    title: "Georgetown, Washington D.C. Blooming",
-    description: ""
-  },
-  {
-    id: "photo2",
-    category: "photography",
-    src: "/art/photo/photo2.jpeg",
-    title: "D.C. Spring Afternoon",
-    description: ""
-  },
-  {
-    id: "photo3",
-    category: "photography",
-    src: "/art/photo/photo3.jpeg",
-    title: "Richmond Waterfront",
-    description: ""
-  },
-  {
-    id: "photo4",
-    category: "photography",
-    src: "/art/photo/photo4.jpeg",
-    title: "Fragments of Charlottesville",
-    description: ""
-  },
+type SubImage = { src: string; title: string; description: string };
+type ArtItem = {
+  id: string;
+  category: string;
+  src: string;
+  title: string;
+  description: string;
+  images?: SubImage[];
+};
 
-  // Ceramics
+const items: ArtItem[] = [
+  // Photography
+  { id: "photo1", category: "photography", src: "/art/photo/photo1.jpeg", title: "Georgetown, Washington D.C. Blooming", description: "" },
+  { id: "photo2", category: "photography", src: "/art/photo/photo2.jpeg", title: "D.C. Spring Afternoon", description: "" },
+  { id: "photo3", category: "photography", src: "/art/photo/photo3.jpeg", title: "Richmond Waterfront", description: "" },
+  { id: "photo4", category: "photography", src: "/art/photo/photo4.jpeg", title: "Fragments of Charlottesville", description: "" },
+
+  // Ceramics — individual
+  { id: "cer1",  category: "ceramics", src: "/art/ceramics/ceramics1.jpeg",  title: "Crushed",        description: "6 x 12 x 10; Stoneware clay, white matte glaze, steel scraper; Manipulated 16 wet pots inspired by Steven Young Lee's intentional deformed pieces, score and slip." },
+  { id: "cer2",  category: "ceramics", src: "/art/ceramics/ceramics2.jpeg",  title: "The Spillover",  description: "6 x 6 x 6; Stoneware clay, cobalt blue glaze, white matte glaze, carving and trimming tools, placement in kiln. Carved six holes, attached 2 enclosed donut vases and a cylinder with dropping glaze effect." },
+  { id: "cer3",  category: "ceramics", src: "/art/ceramics/ceramics3.jpeg",  title: "Cloud 9",        description: "5 x 5 x 5; stoneware clay, cobalt blue glaze, white matte glaze, carving tools, trimming tools; Colors and foot rim inspired by Chinese Ming Dynasty pottery, inlaid glaze decoration in carving." },
+  { id: "cer4",  category: "ceramics", src: "/art/ceramics/ceramics4.jpeg",  title: "Centered",       description: "5 x 5 x 5; stoneware clay, forest green glaze, tenmoku glaze, trimming tools; Wheel-thrown shaped with potter's rib, collared in at neck, bold tenmoku stroke on forest green glaze." },
+  { id: "cer5",  category: "ceramics", src: "/art/ceramics/ceramics5.jpeg",  title: "World Map",      description: "5 x 5 x 5; stoneware clay, cobalt blue glaze, white matte glaze, carving tools, trimming tools; Cone 6 electric, inlaid glaze decoration in carving inspired by Chinese Ming Dynasty pottery." },
+  { id: "cer6",  category: "ceramics", src: "/art/ceramics/ceramics6.jpeg",  title: "Flightless",     description: "9 x 7 x 2; stoneware clay, white matte glaze, slab handles, yellow underglaze, carving tools, trimming tools; Attached enclosed donut vase with two handles made from slab, two wheel-thrown cylinders, and bird." },
+  { id: "cer7",  category: "ceramics", src: "/art/ceramics/ceramics7.jpeg",  title: "The Wedded Pair", description: "7 x 6 x 6; Stoneware clay, cobalt blue glaze, white matte glaze, carving tools, trimming tools; Cone 6 electric, inlaid glaze decoration in carving, inspired by Chinese Ming Dynasty pottery." },
+  { id: "cer8",  category: "ceramics", src: "/art/ceramics/ceramics8.jpeg",  title: "When the Worlds Collide", description: "15 x 8 x 5; stoneware clay, white matte glaze, carving tools, trimming tools; attached 3 hand-thrown enclosed donut forms, cut and altered form." },
+  { id: "cer9",  category: "ceramics", src: "/art/ceramics/ceramics9.jpeg",  title: "Extracted",      description: "5 x 5 x 2; stoneware clay, cobalt blue glaze, carving tools, trimming tools; This piece serves as a conceptual protest statement piece, pierced holes cut donut form." },
+  { id: "cer10", category: "ceramics", src: "/art/ceramics/ceramics10.png",  title: "Blue Vase",      description: "Porcelain clay, cone 6, blue rutile glaze." },
+  { id: "cer11", category: "ceramics", src: "/art/ceramics/ceramics11.png",  title: "Handmade Bowl",  description: "Porcelain clay, 8% mason stains teal, clear glaze." },
+  { id: "cer13", category: "ceramics", src: "/art/ceramics/ceramics13.png",  title: "Tea Bag Holder", description: "Porcelain slab, blue rutile glaze." },
+  { id: "cer17", category: "ceramics", src: "/art/ceramics/ceramics17.png",  title: "Berry Strainer", description: "Stoneware clay, blue rutile glaze, cone 6." },
+
+  // Body Toxins group — ceramics14 is the hero card
   {
-    id: "cer1",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics1.jpeg",
-    title: "Crushed",
-    description: " 6 x 12 x 10; Stoneware clay, white matte glaze, steel scraper; Manipulated 16 wet pots inspired by Steven Young Lee's intentional deformed pieces, score and slip."
-  },
-  {
-    id: "cer2",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics2.jpeg",
-    title: "The Spillover",
-    description: " 6 x 6 x 6; Stoneware clay, cobalt blue glaze, white matte glaze, carving and trimming tools, placement in kiln. Carved six holes, attached 2 enclosed donut vases and a cylinder with dropping glaze effect."
-  },
-  {
-    id: "cer3",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics3.jpeg",
-    title: "Cloud 9",
-    description: "5 x 5 x 5; stoneware clay, cobalt blue glaze, white matte glaze, carving tools, trimming tools; Colors and foot rim inspired by Chinese Ming Dynasty pottery, inlaid glaze decoration in carving."
-  },
-  {
-    id: "cer4",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics4.jpeg",
-    title: "Centered",
-    description: "5 x 5 x 5; stoneware clay, forest green glaze, tenmoku glaze, trimming tools; Wheel-thrown shaped with potter's rib, collared in at neck, bold tenmoku stroke on forest green glaze."
-  },
-  {
-    id: "cer5",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics5.jpeg",
-    title: "World Map",
-    description: "5 x 5 x 5; stoneware clay, cobalt blue glaze, white matte glaze, carving tools, trimming tools; Cone 6 electric, inlaid glaze decoration in carving inspired by Chinese Mind Dynasty pottery."
-  },
-  {
-    id: "cer6",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics6.jpeg",
-    title: "Flightless",
-    description: "9 x 7 x 2; stoneware clay, white matte glaze, slab handles, yellow underglaze, carving tools, trimming tools; Attached enclosed donut vase with two handles made from slab, two wheel-thrown cylinders, and bird. A playful balance holes, objects, and negative space."
-  },
-  {
-    id: "cer7",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics7.jpeg",
-    title: "The Wedded Pair",
-    description: "7 x 6 x 6; Stoneware clay, cobalt blue glaze, white matte glaze, carving tools, trimming tools; Cone 6 electric, inlaid glaze decoration in carving, inspired by Chinese Ming Dynasty pottery."
-  },
-  {
-    id: "cer8",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics8.jpeg",
-    title: "When the Worlds Collide",
-    description: "15 x 8 x 5; stoneware clay, white matte glaze, carving tools, trimming tools; attached 3 hand-thrown enclosed donut forms, cut and altered form. "
-  },
-  {
-    id: "cer9",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics9.jpeg",
-    title: "Extracted",
-    description: "5 x 5 x 2; stoneware clay, cobalt blue glaze, carving tools, trimming tools; This piece serves as a conceptual protest statement piece, pierced holes cut donut form."
-  },
-  {
-    id: "cer10",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics10.png",
-    title: "Blue Vase",
-    description: "Porcelain clay, cone 6, blue rutile glaze."
-  },
-  {
-    id: "cer11",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics11.png",
-    title: "Handmade Bowl",
-    description: "Porcelain clay, 8% mason stains teal, clear glaze."
-  },
-  {
-    id: "cer12",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics12.png",
-    title: "Body Toxins",
-    description: "Red clay, 8% mason stains tangerine and purple, clear glaze, coral glaze, yarn. This piece explores the fragility of our body and how our skin filters out body toxins."
-  },
-  {
-    id: "cer13",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics13.png",
-    title: "Tea Bag Holder",
-    description: "Porcelain slab, blue rutile glaze."
-  },
-  {
-    id: "cer14",
+    id: "body-toxins",
     category: "ceramics",
     src: "/art/ceramics/ceramics14.png",
-    title: "Body Toxins (II)",
-    description: "Red clay, 8% mason stains tangerine and purple, clear glaze, coral glaze, yarn. This piece explores the fragility of our body and how our skin filters out body toxins."
-  },
-  {
-    id: "cer15",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics15.png",
-    title: "Body Toxins (III)",
-    description: "Red clay, 8% mason stains tangerine and purple, clear glaze, coral glaze, yarn. This piece explores the fragility of our body and how our skin filters out body toxins."
-  },
-  {
-    id: "cer16",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics16.png",
-    title: "Body Toxins (IV)",
-    description: "Red clay, 8% mason stains tangerine and purple, clear glaze, coral glaze, yarn. This piece explores the fragility of our body and how our skin filters out body toxins."
-  },
-  {
-    id: "cer17",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics17.png",
-    title: "Berry Strainer",
-    description: "Stoneware clay, blue rutile glaze, cone 6."
-  },
-  {
-    id: "cer18",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics18.png",
-    title: "Bedside Water Set — Bottle",
-    description: "Stoneware clay, blue rutile glaze, cone 6. Part of a matched bedside water bottle and cup set."
-  },
-  {
-    id: "cer19",
-    category: "ceramics",
-    src: "/art/ceramics/ceramics19.png",
-    title: "Bedside Water Set — Cup",
-    description: "Stoneware clay, blue rutile glaze, cone 6. Part of a matched bedside water bottle and cup set."
+    title: "Body Toxins",
+    description: "Red clay, 8% mason stains tangerine and purple, clear glaze, coral glaze, yarn. This piece explores the fragility of our body and how our skin filters out body toxins.",
+    images: [
+      { src: "/art/ceramics/ceramics14.png", title: "Body Toxins (II)",  description: "Red clay, 8% mason stains tangerine and purple, clear glaze, coral glaze, yarn. This piece explores the fragility of our body and how our skin filters out body toxins." },
+      { src: "/art/ceramics/ceramics15.png", title: "Body Toxins (III)", description: "Red clay, 8% mason stains tangerine and purple, clear glaze, coral glaze, yarn. This piece explores the fragility of our body and how our skin filters out body toxins." },
+      { src: "/art/ceramics/ceramics16.png", title: "Body Toxins (IV)",  description: "Red clay, 8% mason stains tangerine and purple, clear glaze, coral glaze, yarn. This piece explores the fragility of our body and how our skin filters out body toxins." },
+      { src: "/art/ceramics/ceramics12.png", title: "Body Toxins",       description: "Red clay, 8% mason stains tangerine and purple, clear glaze, coral glaze, yarn. This piece explores the fragility of our body and how our skin filters out body toxins." },
+    ],
   },
 
-  // Others (sculpture etc.)
+  // Bedside Water Set — bottle is the hero card
   {
-    id: "sc1",
+    id: "bedside-set",
+    category: "ceramics",
+    src: "/art/ceramics/ceramics18.png",
+    title: "Bedside Water Set",
+    description: "Stoneware clay, blue rutile glaze, cone 6. A matched bedside water bottle and cup set.",
+    images: [
+      { src: "/art/ceramics/ceramics18.png", title: "Bedside Water Set — Bottle", description: "Stoneware clay, blue rutile glaze, cone 6. Part of a matched bedside water bottle and cup set." },
+      { src: "/art/ceramics/ceramics19.png", title: "Bedside Water Set — Cup",    description: "Stoneware clay, blue rutile glaze, cone 6. Part of a matched bedside water bottle and cup set." },
+    ],
+  },
+
+  // Others — Tea Ceremony group
+  {
+    id: "tea-ceremony",
     category: "others",
     src: "/art/others/sculpture1.jpeg",
     title: "Tea Ceremony",
-    description: "mixed media: wood, steel, red clay, glaze, nails; Built everything from scratch, from cutting pieces of wood to building mini versions of tea tables, to welding metal rods to form a cup holder, and throwing stoneware mugs set. An attempt to recreate a childhood memory with my grandparents. "
-  },
-  {
-    id: "sc2",
-    category: "others",
-    src: "/art/others/sculpture1.1.jpeg",
-    title: "Aerial View of Tea Ceremony",
-    description: ""
+    description: "mixed media: wood, steel, red clay, glaze, nails; Built everything from scratch, from cutting pieces of wood to building mini versions of tea tables, to welding metal rods to form a cup holder, and throwing stoneware mugs set. An attempt to recreate a childhood memory with my grandparents.",
+    images: [
+      { src: "/art/others/sculpture1.jpeg",   title: "Tea Ceremony",               description: "mixed media: wood, steel, red clay, glaze, nails; Built everything from scratch, from cutting pieces of wood to building mini versions of tea tables, to welding metal rods to form a cup holder, and throwing stoneware mugs set. An attempt to recreate a childhood memory with my grandparents." },
+      { src: "/art/others/sculpture1.1.jpeg", title: "Tea Ceremony — Aerial View", description: "" },
+    ],
   },
 ];
 
 const filters = [
-  { key: "all", label: "All" },
+  { key: "all",         label: "All" },
   { key: "photography", label: "Photography" },
-  { key: "ceramics", label: "Ceramics" },
-  { key: "others", label: "Others" },
+  { key: "ceramics",    label: "Ceramics" },
+  { key: "others",      label: "Others" },
 ];
 ---
 
@@ -196,7 +87,6 @@ const filters = [
       <h2 class="art-h">Creative Corner</h2>
       <p class="art-p">Photography, ceramics, and ongoing experiments ;)</p>
     </div>
-
     <div class="art-filters" role="tablist" aria-label="Filter artworks">
       {filters.map((f) => (
         <button class="art-filter" data-filter={f.key} type="button">{f.label}</button>
@@ -213,12 +103,16 @@ const filters = [
         data-title={it.title}
         data-description={it.description}
         data-src={it.src}
+        data-images={it.images ? JSON.stringify(it.images) : undefined}
       >
         <img class="art-thumb" src={it.src} alt={it.title} loading="lazy" />
         <div class="art-meta">
           <p class="art-title">{it.title}</p>
           <p class="art-sub">{it.category}</p>
         </div>
+        {it.images && (
+          <span class="art-count-badge">{it.images.length} photos</span>
+        )}
       </button>
     ))}
   </div>
@@ -226,13 +120,22 @@ const filters = [
   <!-- Modal -->
   <dialog class="art-modal" id="artModal">
     <form method="dialog" class="art-modal-inner">
-      <button class="art-close" aria-label="Close">✕</button>
+      <button class="art-close" aria-label="Close" type="submit">✕</button>
       <div class="art-modal-body">
-        <img id="modalImg" class="art-modal-img" alt="" />
+
+        <div class="art-modal-left">
+          <div class="art-img-wrap">
+            <img id="modalImg" class="art-modal-img" alt="" />
+            <button id="modalPrev" class="art-nav art-nav--prev" type="button" aria-label="Previous" hidden>&#8249;</button>
+            <button id="modalNext" class="art-nav art-nav--next" type="button" aria-label="Next" hidden>&#8250;</button>
+          </div>
+        </div>
+
         <div class="art-modal-text">
           <h3 id="modalTitle" class="art-modal-title"></h3>
           <p id="modalDesc" class="art-modal-desc"></p>
         </div>
+
       </div>
     </form>
   </dialog>
@@ -244,45 +147,72 @@ const filters = [
     if (!grid) return;
 
     const section = grid.closest(".art-wrap");
-    const buttons = section?.querySelectorAll(".art-filter") ?? [];
-    const modal = document.getElementById("artModal");
-    const modalImg = document.getElementById("modalImg");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalDesc = document.getElementById("modalDesc");
+    const filterBtns = section?.querySelectorAll<HTMLElement>(".art-filter") ?? [];
+    const modal      = document.getElementById("artModal")   as HTMLDialogElement | null;
+    const modalImg   = document.getElementById("modalImg")   as HTMLImageElement  | null;
+    const modalTitle = document.getElementById("modalTitle") as HTMLElement | null;
+    const modalDesc  = document.getElementById("modalDesc")  as HTMLElement | null;
+    const modalPrev  = document.getElementById("modalPrev")  as HTMLButtonElement | null;
+    const modalNext  = document.getElementById("modalNext")  as HTMLButtonElement | null;
     if (!modal || !modalImg || !modalTitle || !modalDesc) return;
 
-    let active = "all";
-    buttons[0]?.classList.add("is-active");
+    // ── Filter logic ──────────────────────────────────────────────
+    const paramFilter = new URLSearchParams(window.location.search).get("filter");
+    let active = paramFilter ?? "all";
+
+    filterBtns.forEach(b => b.classList.toggle("is-active", b.dataset.filter === active));
+    if (!paramFilter) filterBtns[0]?.classList.add("is-active");
 
     function applyFilter() {
-      grid.querySelectorAll(".art-card").forEach((card) => {
-        const el = card as HTMLElement;
-        el.style.display = (active === "all" || el.dataset.category === active) ? "" : "none";
+      grid.querySelectorAll<HTMLElement>(".art-card").forEach(card => {
+        card.style.display = (active === "all" || card.dataset.category === active) ? "" : "none";
       });
     }
+    applyFilter();
 
-    buttons.forEach((btn) => {
+    filterBtns.forEach(btn => {
       btn.addEventListener("click", () => {
-        buttons.forEach((b) => b.classList.remove("is-active"));
+        filterBtns.forEach(b => b.classList.remove("is-active"));
         btn.classList.add("is-active");
-        active = (btn as HTMLElement).dataset.filter ?? "all";
+        active = btn.dataset.filter ?? "all";
         applyFilter();
       });
     });
 
-    grid.addEventListener("click", (e) => {
-      const card = (e.target as Element).closest(".art-card") as HTMLElement | null;
+    // ── Multi-image modal ─────────────────────────────────────────
+    type Slide = { src: string; title: string; description: string };
+    let slides: Slide[] = [];
+    let idx = 0;
+
+    function goTo(i: number) {
+      idx = i;
+      const s = slides[i];
+      modalImg!.src = s.src;
+      modalImg!.alt = s.title;
+      modalTitle!.textContent = s.title;
+      modalDesc!.textContent  = s.description;
+      if (modalPrev) modalPrev.hidden = (i === 0);
+      if (modalNext) modalNext.hidden = (i === slides.length - 1);
+    }
+
+    grid.addEventListener("click", e => {
+      const card = (e.target as Element).closest<HTMLElement>(".art-card");
       if (!card) return;
-      (modalImg as HTMLImageElement).src = card.dataset.src ?? "";
-      (modalImg as HTMLImageElement).alt = card.dataset.title ?? "";
-      modalTitle.textContent = card.dataset.title ?? "";
-      modalDesc.textContent = card.dataset.description ?? "";
-      (modal as HTMLDialogElement).showModal();
+
+      const raw = card.dataset.images;
+      if (raw) {
+        slides = JSON.parse(raw) as Slide[];
+      } else {
+        slides = [{ src: card.dataset.src ?? "", title: card.dataset.title ?? "", description: card.dataset.description ?? "" }];
+      }
+      goTo(0);
+      modal.showModal();
     });
 
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) (modal as HTMLDialogElement).close();
-    });
+    modalPrev?.addEventListener("click", () => { if (idx > 0) goTo(idx - 1); });
+    modalNext?.addEventListener("click", () => { if (idx < slides.length - 1) goTo(idx + 1); });
+
+    modal.addEventListener("click", e => { if (e.target === modal) modal.close(); });
   }
 
   document.addEventListener("astro:page-load", initGallery);
@@ -290,11 +220,11 @@ const filters = [
 
 <style>
   .art-wrap { margin-top: 48px; }
-  .art-top { display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap; }
-  .art-h { margin:0; font-size:32px; }
-  .art-p { margin:10px 0 0; color: var(--muted); }
+  .art-top  { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+  .art-h    { margin: 0; font-size: 32px; }
+  .art-p    { margin: 10px 0 0; color: var(--muted); }
 
-  .art-filters { display:flex; gap:10px; flex-wrap:wrap; }
+  .art-filters { display: flex; gap: 10px; flex-wrap: wrap; }
   .art-filter {
     padding: 10px 14px;
     border-radius: 999px;
@@ -304,11 +234,7 @@ const filters = [
     cursor: pointer;
     font-weight: 600;
   }
-  .art-filter.is-active {
-    color: #fff;
-    background: var(--accent);
-    box-shadow: none;
-  }
+  .art-filter.is-active { color: #fff; background: var(--accent); }
 
   .art-grid {
     margin-top: 18px;
@@ -319,70 +245,120 @@ const filters = [
 
   .art-card {
     padding: 0;
-    border: 0;
+    border: 1px solid var(--border);
     text-align: left;
     cursor: zoom-in;
     position: relative;
     border-radius: 24px;
     overflow: hidden;
     background: rgba(255,255,255,0.06);
-    border: 1px solid var(--border);
   }
 
-  .art-thumb { width: 100%; height: 340px; object-fit: cover; display:block; }
+  .art-thumb { width: 100%; height: 340px; object-fit: cover; display: block; }
 
-
-.art-meta {
+  .art-meta {
     position: absolute;
-    left: 10px;
-    right: 10px;
-    bottom: 10px;
+    left: 10px; right: 10px; bottom: 10px;
     padding: 6px 10px;
     border-radius: 10px;
     background: rgba(0,0,0,0.35);
     backdrop-filter: blur(6px);
   }
   .art-title {
-    margin: 0;
-    font-weight: 600;
-    font-size: 13px;
-    color: var(--text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin: 0; font-weight: 600; font-size: 13px; color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .art-sub {
-    margin: 2px 0 0;
-    font-size: 11px;
-    color: var(--muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin: 2px 0 0; font-size: 11px; color: var(--muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
-  /* modal */
-  .art-modal::backdrop { background: rgba(0,0,0,0.65); }
-  .art-modal { border: none; padding: 0; border-radius: 18px; width: min(980px, 92vw); }
-  .art-modal-inner { margin: 0; padding: 0; }
-  .art-close {
+  /* multi-photo badge */
+  .art-count-badge {
     position: absolute;
-    right: 12px;
-    top: 12px;
-    width: 40px;
-    height: 40px;
+    top: 10px; right: 10px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(4px);
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.88);
+    letter-spacing: 0.04em;
+    pointer-events: none;
+  }
+
+  /* ── Modal ── */
+  .art-modal::backdrop { background: rgba(0,0,0,0.65); }
+  .art-modal {
+    border: none; padding: 0;
+    border-radius: 18px;
+    width: min(1020px, 94vw);
+    max-height: 92vh;
+    overflow: hidden;
+    background: var(--bg1);
+    border: 1px solid var(--border);
+  }
+  .art-modal-inner { margin: 0; padding: 0; position: relative; }
+
+  .art-close {
+    position: absolute; right: 12px; top: 12px; z-index: 10;
+    width: 40px; height: 40px;
     border-radius: 999px;
     border: 1px solid var(--border);
-    background: rgba(255,255,255,0.08);
+    background: var(--bg2);
     color: var(--text);
     cursor: pointer;
+    font-size: 14px;
   }
-  .art-modal-body { display:grid; grid-template-columns: 1fr 320px; gap: 16px; padding: 16px; background: rgba(10,8,14,0.95); }
-  .art-modal-img { width:100%; height: 72vh; object-fit: contain; background: rgba(255,255,255,0.04); border-radius: 14px; }
-  .art-modal-title { margin: 0 0 8px; font-size: 20px; }
-  .art-modal-desc { margin: 0; color: var(--muted); line-height: 1.6; }
 
-  @media (max-width: 860px){
+  .art-modal-body {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .art-modal-left { min-width: 0; }
+
+  .art-img-wrap { position: relative; }
+
+  .art-modal-img {
+    width: 100%; height: 64vh;
+    object-fit: contain;
+    background: var(--bg0);
+    border-radius: 14px;
+    display: block;
+  }
+
+  /* nav arrows — always dark/light over image, independent of theme */
+  .art-nav {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--text);
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.18s;
+    z-index: 2;
+  }
+  .art-nav:hover { background: var(--bg1); }
+  .art-nav--prev { left: 10px; }
+  .art-nav--next { right: 10px; }
+  .art-nav[hidden] { display: none; }
+
+  /* right column: text */
+  .art-modal-text { padding-top: 4px; }
+  .art-modal-title { margin: 0 0 8px; font-size: 20px; color: var(--text); }
+  .art-modal-desc  { margin: 0; color: var(--muted); line-height: 1.6; font-size: 14px; }
+
+  @media (max-width: 720px) {
     .art-modal-body { grid-template-columns: 1fr; }
-    .art-modal-img { height: 56vh; }
+    .art-modal-img  { height: 52vh; }
   }
 </style>

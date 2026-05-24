@@ -1,0 +1,265 @@
+<script>
+  // Pottery-wheel custom cursor — fine-pointer (mouse/trackpad) only
+  let canvas: HTMLCanvasElement | null = null;
+  let ctx: CanvasRenderingContext2D | null = null;
+  let running = false;
+
+  function ensureCursorStyle() {
+    if (!document.getElementById('cc-style')) {
+      const s = document.createElement('style');
+      s.id = 'cc-style';
+      s.textContent = '*{cursor:none!important}';
+      document.head.appendChild(s);
+    }
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    if (!running) {
+      start();
+    } else {
+      if (canvas && !canvas.isConnected) document.body.appendChild(canvas);
+      ensureCursorStyle();
+    }
+  });
+
+  function start() {
+    if (!window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+    running = true;
+
+    canvas = document.createElement('canvas');
+    canvas.id = 'cc-canvas';
+    canvas.setAttribute('aria-hidden', 'true');
+    canvas.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9998;';
+    document.body.appendChild(canvas);
+    ctx = canvas.getContext('2d')!;
+
+    ensureCursorStyle();
+
+    let dpr = 1;
+    const resize = () => {
+      if (!canvas || !ctx) return;
+      dpr = window.devicePixelRatio || 1;
+      canvas.width  = Math.round(window.innerWidth  * dpr);
+      canvas.height = Math.round(window.innerHeight * dpr);
+      canvas.style.width  = window.innerWidth  + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.scale(dpr, dpr);
+    };
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    let accent = '#b83050';
+    const syncAccent = () => {
+      accent = getComputedStyle(document.documentElement)
+        .getPropertyValue('--accent').trim() || '#b83050';
+    };
+    syncAccent();
+    new MutationObserver(syncAccent).observe(document.documentElement, {
+      attributes: true, attributeFilter: ['class'],
+    });
+
+    // Animation state
+    let mx = -500, my = -500;
+    let curX = -500, curY = -500;
+    let rot = 0;
+    let potH = 8, targetPotH = 8;
+    let wobble = 0;
+    let overLink = false;
+    let idleId: ReturnType<typeof setTimeout> | null = null;
+
+    type Dot = { x: number; y: number; vx: number; vy: number; life: number; r: number };
+    const dots: Dot[] = [];
+
+    window.addEventListener('mousemove', (e) => {
+      mx = e.clientX;
+      my = e.clientY;
+      if (idleId !== null) clearTimeout(idleId);
+      targetPotH = 8;
+      // After 1.5s idle, vase grows tall
+      idleId = setTimeout(() => { targetPotH = 36; }, 1500);
+    }, { passive: true });
+
+    window.addEventListener('mouseleave', () => { mx = -500; my = -500; });
+
+    window.addEventListener('click', () => {
+      wobble = 1;
+      targetPotH = 8;
+      for (let i = 0; i < 7; i++) {
+        const a   = Math.random() * Math.PI * 2;
+        const spd = 2 + Math.random() * 5;
+        dots.push({
+          x: curX + (Math.random() - 0.5) * 6,
+          y: curY - potH,
+          vx: Math.cos(a) * spd,
+          vy: Math.sin(a) * spd - 2.5,
+          life: 1,
+          r: 1.5 + Math.random() * 2.5,
+        });
+      }
+    });
+
+    window.addEventListener('mouseover', (e) => {
+      overLink = !!(e.target as Element)
+        .closest('a,button,input,textarea,select,[role=button],[tabindex]');
+    }, { passive: true });
+
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+    function vasePath(pH: number): Path2D {
+      const footW = 7.5;
+      const bodyW = 7;
+      const neckW = 3.5;
+      const rimW  = 5.5;
+      const p = new Path2D();
+      p.moveTo(footW, 0);
+      // right side: foot → belly → neck → rim
+      p.quadraticCurveTo(bodyW * 1.2, -pH * 0.32, neckW, -pH * 0.62);
+      p.quadraticCurveTo(rimW * 0.7,  -pH * 0.84, rimW,  -pH);
+      // across the top
+      p.lineTo(-rimW, -pH);
+      // left side: rim → neck → belly → foot
+      p.quadraticCurveTo(-rimW * 0.7,  -pH * 0.84, -neckW, -pH * 0.62);
+      p.quadraticCurveTo(-bodyW * 1.2, -pH * 0.32, -footW, 0);
+      p.closePath();
+      return p;
+    }
+
+    function frame() {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      // Faster cursor follow
+      curX = lerp(curX, mx, 0.22);
+      curY = lerp(curY, my, 0.22);
+
+      rot += 0.045;
+      // Grow slowly, shrink quickly
+      potH = lerp(potH, targetPotH, targetPotH > potH ? 0.035 : 0.1);
+      wobble *= 0.84;
+
+      const wobbleSin = Math.sin(Date.now() / 55) * wobble * 0.28;
+      const sx = 1 + wobbleSin;
+
+      if (curX > -100) {
+        // ── Link-hover ring ──
+        if (overLink) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(curX, curY, 22, 0, Math.PI * 2);
+          ctx.strokeStyle = accent;
+          ctx.globalAlpha = 0.38;
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // ── Drop shadow ──
+        ctx.save();
+        ctx.globalAlpha = 0.1;
+        ctx.beginPath();
+        ctx.ellipse(curX, curY + 14, 16 * sx, 4, 0, 0, Math.PI * 2);
+        ctx.fillStyle = '#000';
+        ctx.fill();
+        ctx.restore();
+
+        // ── Wheel + vase ──
+        ctx.save();
+        ctx.translate(curX, curY);
+        ctx.scale(sx, 1);
+
+        // Disc face
+        ctx.save();
+        ctx.scale(1, 0.3);
+        ctx.beginPath();
+        ctx.arc(0, 0, 18, 0, Math.PI * 2);
+        ctx.fillStyle = accent;
+        ctx.globalAlpha = 0.38;
+        ctx.fill();
+
+        // Three spokes
+        ctx.globalAlpha = 0.5;
+        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = accent;
+        for (let i = 0; i < 3; i++) {
+          const a = rot + (i * Math.PI * 2) / 3;
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(Math.cos(a) * 16, Math.sin(a) * 16);
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        // Wheel rim ellipse
+        ctx.globalAlpha = 0.65;
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = accent;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 18, 5.5, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // ── Vase body (bezier curves) ──
+        const pH = potH;
+        const rimW  = 5.5;
+        const footW = 7.5;
+        ctx.globalAlpha = 1;
+
+        const vp = vasePath(pH);
+
+        // Clay fill
+        ctx.fillStyle = '#C4956A';
+        ctx.fill(vp);
+
+        // Side shading
+        const g = ctx.createLinearGradient(-footW, 0, footW, 0);
+        g.addColorStop(0,   'rgba(0,0,0,0.18)');
+        g.addColorStop(0.5, 'rgba(255,255,255,0.04)');
+        g.addColorStop(1,   'rgba(255,255,255,0.12)');
+        ctx.fillStyle = g;
+        ctx.fill(vp);
+
+        // Top rim (opening)
+        ctx.fillStyle = '#DBA97A';
+        ctx.beginPath();
+        ctx.ellipse(0, -pH, rimW, rimW * 0.3, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Inner cavity — deepens as vase grows
+        if (pH > 8) {
+          const t = Math.min(1, (pH - 8) / 20);
+          ctx.fillStyle = `rgba(50,24,14,${(t * 0.55).toFixed(2)})`;
+          ctx.beginPath();
+          ctx.ellipse(0, -pH, rimW * 0.6, rimW * 0.18, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Foot ellipse (where vase meets wheel)
+        ctx.fillStyle = '#A0724A';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, footW, footW * 0.28, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      }
+
+      // ── Clay splatter particles ──
+      for (let i = dots.length - 1; i >= 0; i--) {
+        const d = dots[i];
+        d.x  += d.vx;
+        d.y  += d.vy;
+        d.vy += 0.3;
+        d.life -= 0.045;
+        if (d.life <= 0) { dots.splice(i, 1); continue; }
+        ctx.globalAlpha = d.life * 0.85;
+        ctx.fillStyle = '#C4956A';
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      requestAnimationFrame(frame);
+    }
+
+    requestAnimationFrame(frame);
+  }
+</script>

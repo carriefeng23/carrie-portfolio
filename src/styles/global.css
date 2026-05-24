@@ -82,7 +82,7 @@ body {
   gap: 8px;
   padding: 8px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--bg1);
   border: 1px solid var(--border);
   backdrop-filter: blur(10px);
 }
@@ -121,15 +121,15 @@ body {
   justify-content: center;
   padding: 0.45rem 0.7rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
+  background: var(--bg2);
+  color: var(--text);
   text-decoration: none;
   font-size: 0.9rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
 }
 
 .icon-btn:hover {
-  background: rgba(255, 255, 255, 0.16);
+  opacity: 0.75;
 }
 
 .hero {
@@ -859,7 +859,7 @@ html.light .topbar-outer.scrolled {
 }
 .btn-ghost:hover {
   color: var(--text);
-  border-color: rgba(255,255,255,0.28);
+  border-color: var(--muted);
   transform: translateY(-2px);
 }
 .hero-actions {

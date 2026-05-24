@@ -1,0 +1,570 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+type MapImage = { src: string; caption: string };
+type MapEntry = {
+  slug: string;
+  title: string;
+  description: string;
+  analysis?: string[];
+  tools: string[];
+  img?: string;          // card thumbnail (omit for PDF-only entries)
+  images?: MapImage[];   // carousel; omit for single-image projects
+  pdf?: string;          // PDF report path
+};
+
+const maps: MapEntry[] = [
+  {
+    slug: "poverty",
+    title: "Tri-State Poverty Distribution",
+    description: "Choropleth mapping percent poverty across New York, New Jersey, and Connecticut census tracts.",
+    analysis: [
+      "Darker shades indicate higher levels of poverty. Most high poverty clusters are concentrated in the NYC area, where some regions appear almost black on the map. These clusters extend into nearby parts of New Jersey, suggesting a spillover into surrounding suburban areas.",
+      "In upstate New York, poverty is primarily concentrated around major urban centers such as Buffalo, Syracuse, Rochester, and Albany. In Connecticut, the areas with the highest poverty rates are Hartford and New Haven.",
+      "Overall, the map reveals a strong concentration of poverty in urban areas, with patterns that extend outward into surrounding suburban regions.",
+    ],
+    tools: ["QGIS", "Census ACS", "Choropleth"],
+    img: "/gis/poverty.png",
+  },
+  {
+    slug: "census",
+    title: "Census Data & Spatial Joins",
+    description: "Three-variable demographic and socioeconomic analysis across Virginia, North Carolina, and Tennessee using ACS census tract data.",
+    analysis: [
+      "This project analyzes demographic and socioeconomic patterns across three contiguous southeastern states: Virginia, North Carolina, and Tennessee. These states were selected because they form a geographically connected region while also demonstrating diverse settlement structures, including major metropolitan areas, mid-sized cities, suburban corridors, and large rural zones. I've lived in Virginia for a couple of years and thought it would be interesting to look at it and its nearby states. Their adjacency allows spatial patterns to be examined continuously rather than in isolation, making cross-state comparisons more meaningful. The analysis focuses on three census tract-level variables derived from the American Community Survey (ACS): total population, median household income, and percent of the population below the poverty line.",
+      "Two primary datasets were required for this analysis: geographic boundaries and attribute data. Census tract boundary files were gathered from the U.S. Census Bureau's TIGER/Line shapefiles. Separate tract shapefiles for Virginia, North Carolina, and Tennessee were downloaded and merged into a single vector layer. Socioeconomic attributes were extracted from the ACS 5-Year Estimates (2020–2024): total population from Table B01003, median household income from Table B19013, and poverty data from Table S1701.",
+      "Different classification methods were applied to each variable. For total population, Natural Breaks (Jenks) was used because population counts at the census tract level tend to be uneven and spatially clustered due to urbanization, and this method identifies inherent groupings within skewed datasets by minimizing within-class variation. Median household income was classified using Quantile, which assigns an equal number of observations to each class and highlights relative economic standing across tracts. The green color palette reflects the common association of money and green paper bills. For poverty rate, Equal Interval classification was applied because percentage values fall within a fixed scale, and equal intervals produce intuitive, policy-readable categories (0–10%, 10–20%, etc.). Red was chosen to raise awareness of the socioeconomic issue.",
+      "Several notable spatial patterns emerge. The population map shows strong clustering around urban and metropolitan areas, while rural tracts exhibit much lower values. The continuous regional map highlights how urban and metropolitan influences often extend across state boundaries; demographic patterns don't strictly conform to administrative divisions.",
+      "The median household income map demonstrates clear spatial differentiation. Higher-income tracts cluster near metropolitan areas and suburban zones, mostly in Virginia, while lower-income tracts are more prevalent in rural and economically transitional regions. This pattern suggests a strong spatial relationship between income levels and urban proximity.",
+      "The poverty map reveals patterns that both overlap with and diverge from income distributions. Elevated poverty rates are visible in many rural tracts, but high-poverty clusters also appear in certain urban areas, indicating that population density alone does not guarantee economic security.",
+      "This analysis demonstrates how GIS techniques can highlight regional demographic and socioeconomic structures. Across Virginia, North Carolina, and Tennessee, consistent regional trends appear: urban concentration of population and income alongside more dispersed patterns of poverty.",
+    ],
+    tools: ["QGIS", "Census ACS", "Natural Breaks", "Quantile", "Equal Interval", "Spatial Joins"],
+    img: "/gis/census1.png",
+    images: [
+      { src: "/gis/census1.png", caption: "Map 1:Total Population (Natural Breaks)" },
+      { src: "/gis/census2.png", caption: "Map 2:Median Household Income (Quantile)" },
+      { src: "/gis/census3.png", caption: "Map 3:Poverty Rate (Equal Interval)" },
+    ],
+  },
+  {
+    slug: "parks",
+    title: "Park Acreage in New York",
+    description: "Map of park coverage and acreage across New York, examining green space distribution and access disparities across boroughs.",
+    tools: ["QGIS", "NYC Open Data"],
+    img: "/gis/park1.png",
+    images: [
+      { src: "/gis/park1.png", caption: "Map 1:Park Coverage" },
+      { src: "/gis/park2.png", caption: "Map 2:Park Acreage" },
+    ],
+  },
+  {
+    slug: "atlanta",
+    title: "Asian American Population in Atlanta",
+    description: "Demographic concentration map identifying census tracts with high Asian American populations across the Atlanta metro area.",
+    tools: ["QGIS", "Census ACS", "Dot Density"],
+    img: "/gis/asianpop.png",
+  },
+  {
+    slug: "subway",
+    title: "Spatial Patterns of Subway Accessibility and Neighborhood Demographics in NYC",
+    description: "Four-map analysis examining how subway station locations, service buffers, income distribution, and transit deserts relate to neighborhood demographics across NYC.",
+    analysis: [
+      "This analysis examines the spatial distribution of subway stations in New York City and explores how access to transit relates to neighborhood demographics, particularly median household income. Four maps were created to visualize subway station locations, service buffers, income distribution, and transit deserts across the city. Together, these maps reveal spatial patterns in transit accessibility and highlight areas where residents may experience limited access to public transportation.",
+      "The first map shows the distribution of subway stations and their associated service buffers across New York City. The subway network is not evenly distributed throughout the city. Instead, stations are heavily concentrated in Manhattan and parts of Brooklyn and Queens. Manhattan especially has a very dense network of stations that usually fall within overlapping service buffers, showing that residents in these areas have multiple nearby subway options. Areas such as Staten Island and large portions of eastern Queens and the Bronx contain far fewer subway stations. Staten Island has almost no subway infrastructure, relying on buses and the Staten Island Railway. These patterns suggest that the subway system is historically concentrated in the city's most densely developed and economically central areas.",
+      "The second map displays median household income by census tract across New York City. Higher median household incomes appear primarily in Manhattan and some parts of Brooklyn and Staten Island, while lower-income areas are more common in sections of the Bronx, eastern Queens, and parts of central Brooklyn. This pattern reflects broader socioeconomic geography within New York City, where certain neighborhoods have historically experienced higher economic investment while others have faced economic challenges.",
+      "When subway accessibility and income data are combined in the third map, the spatial relationship between transit access and neighborhood demographics becomes more apparent. Areas with high subway accessibility, especially Manhattan and western Brooklyn, often overlap with higher-income census tracts. However, some lower-income neighborhoods, particularly in parts of the Bronx and Brooklyn, also fall within subway service areas. This reflects the historical development of the subway system, which was designed in part to connect working-class neighborhoods to employment centers in Manhattan. Yet there are still noticeable areas where lower-income neighborhoods have fewer nearby subway stations.",
+      "The fourth map identifies transit deserts, defined as census tracts located more than 0.5 miles from a subway station. These transit deserts are most visible in eastern Queens, southern Brooklyn, and Staten Island. Manhattan and parts of western Brooklyn have very few transit deserts due to the dense subway network. This pattern suggests that residents in outer borough neighborhoods may face longer travel times or greater reliance on buses and other transportation modes to access the subway system.",
+      "Examining these transit deserts and income patterns provides interesting insight into transit equity within New York City. Many neighborhoods identified as transit deserts appear to coincide with mid to lower-income areas. Residents in these areas may face greater barriers to accessing reliable public transportation. Longer walking distances to transit can increase commuting time and reduce access to employment opportunities, education, and essential services. At the same time, some higher-income areas like parts of Staten Island also appear as transit deserts, indicating that limited subway access is not exclusively associated with low-income communities, though the impacts may differ depending on access to alternatives such as car ownership.",
+      "When considering limitations, the analysis uses a simple buffer distance of 0.5 miles to represent transit accessibility. While this is a commonly used planning standard for walkable transit access, it does not account for real-world factors like physical barriers or pedestrian infrastructure. Actual walking routes may be longer or less accessible than the straight-line distance represented in the buffers. The analysis also focuses only on subway stations and does not consider other important forms of transit, such as bus routes, commuter rail, or ferry services, which can significantly affect transportation access.",
+      "Despite these limitations, the maps reveal meaningful spatial patterns in the relationship between subway infrastructure and neighborhood demographics. The subway network is concentrated in central areas of the city, particularly Manhattan and western Brooklyn. Outer borough areas often have fewer subway stations and larger transit deserts, which may create disparities in transit accessibility. Understanding these spatial patterns is important for urban planners working to improve transit equity and ensure that all New Yorkers have equal access to public transportation.",
+    ],
+    tools: ["QGIS", "MTA Data", "Census ACS", "Service Buffers", "Spatial Analysis"],
+    img: "/gis/subway1.png",
+    images: [
+      { src: "/gis/subway1.png", caption: "Map 3:Subway Accessibility & Median Household Income" },
+      { src: "/gis/subway2.png", caption: "Map 4:Transit Deserts (>0.5 mi from station)" },
+    ],
+  },
+  {
+    slug: "katrina",
+    title: "Spatial Patterns of Hurricane Katrina Damage in New Orleans",
+    description: "Socio-economic vulnerability, racial disparity, and environmental risk: a spatial analysis of how Hurricane Katrina's damage was distributed across New Orleans communities.",
+    tools: ["QGIS", "FEMA Data", "Remote Sensing", "Midterm Report"],
+    img: "/gis/katrina-cover.png",
+    pdf: "/gis/katrina.pdf",
+  },
+  {
+    slug: "thesis",
+    title: "Data Centers and Water Stress in Texas, U.S.",
+    description: "A spatial analysis of infrastructure, drought, and environmental vulnerability: examining where data centers concentrate and how that overlaps with water-stressed regions across Texas.",
+    tools: ["QGIS", "Spatial Analysis", "Environmental Data", "Final Project"],
+    img: "/gis/thesis-cover.png",
+    pdf: "/gis/thesis.pdf",
+  },
+];
+---
+
+<Layout title="GIS & Spatial Analysis | Carrie Feng">
+
+  <section class="gis-hero reveal">
+    <p class="kicker">Spatial Analysis</p>
+    <h1 class="gis-heading">GIS & Mapping</h1>
+    <p class="gis-sub">
+      Maps made with QGIS, Census data, and city open datasets.
+      Each one tries to show something a table can't.
+    </p>
+  </section>
+
+  <div class="map-grid">
+    {maps.map((m, i) => (
+      <button
+        class="map-card reveal"
+        type="button"
+        style={`transition-delay: ${(i % 3) * 0.07}s`}
+        data-slug={m.slug}
+        data-title={m.title}
+        data-img={m.img ?? ""}
+        data-analysis={m.analysis ? JSON.stringify(m.analysis) : undefined}
+        data-images={m.images ? JSON.stringify(m.images) : undefined}
+        data-pdf={m.pdf ?? undefined}
+      >
+        {m.img ? (
+          <div class="map-img-wrap">
+            <img src={m.img} alt={m.title} loading="lazy" class="map-img" />
+            {m.images && (
+              <span class="map-count-badge">{m.images.length} maps</span>
+            )}
+            {m.pdf && !m.images && (
+              <span class="map-count-badge">PDF Report</span>
+            )}
+          </div>
+        ) : (
+          <div class="map-img-wrap map-img-wrap--pdf">
+            <span class="pdf-label">PDF Report</span>
+          </div>
+        )}
+        <div class="map-info">
+          <h2 class="map-title">{m.title}</h2>
+          <p class="map-desc">{m.description}</p>
+          <div class="map-tools">
+            {m.tools.map(t => <span class="map-tool">{t}</span>)}
+          </div>
+        </div>
+      </button>
+    ))}
+  </div>
+
+  <!-- Modal -->
+  <dialog class="gis-modal" id="gisModal">
+    <form method="dialog" class="gis-modal-inner">
+      <button class="gis-close" type="submit" aria-label="Close">✕</button>
+      <div class="gis-modal-body">
+
+        <!-- Left: image carousel OR pdf embed -->
+        <div class="gis-modal-left">
+          <!-- image panel -->
+          <div class="gis-img-wrap" id="gisImgWrap">
+            <img id="gisModalImg" class="gis-modal-img" alt="" />
+            <button id="gisPrev" class="gis-nav gis-nav--prev" type="button" aria-label="Previous" hidden>&#8249;</button>
+            <button id="gisNext" class="gis-nav gis-nav--next" type="button" aria-label="Next" hidden>&#8250;</button>
+          </div>
+          <!-- pdf panel -->
+          <div class="gis-pdf-wrap" id="gisPdfWrap" hidden>
+            <iframe id="gisPdfFrame" class="gis-pdf-frame" title="Report PDF"></iframe>
+          </div>
+          <div class="gis-caption-row" id="gisCaptionRow">
+            <p id="gisCaption" class="gis-caption"></p>
+            <a id="gisPdfLink" class="gis-pdf-link" href="#" target="_blank" rel="noopener" hidden>Open full report ↗</a>
+          </div>
+        </div>
+
+        <!-- Right: title + analysis (scrollable) -->
+        <div class="gis-modal-right">
+          <h2 id="gisModalTitle" class="gis-modal-title"></h2>
+          <div id="gisModalAnalysis" class="gis-modal-analysis"></div>
+        </div>
+
+      </div>
+    </form>
+  </dialog>
+
+</Layout>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const modal         = document.getElementById("gisModal")      as HTMLDialogElement  | null;
+    const modalImg      = document.getElementById("gisModalImg")   as HTMLImageElement   | null;
+    const modalTitle    = document.getElementById("gisModalTitle") as HTMLElement        | null;
+    const modalAnalysis = document.getElementById("gisModalAnalysis") as HTMLElement     | null;
+    const caption       = document.getElementById("gisCaption")    as HTMLElement        | null;
+    const prevBtn       = document.getElementById("gisPrev")       as HTMLButtonElement  | null;
+    const nextBtn       = document.getElementById("gisNext")       as HTMLButtonElement  | null;
+    const imgWrap       = document.getElementById("gisImgWrap")    as HTMLElement        | null;
+    const pdfWrap       = document.getElementById("gisPdfWrap")    as HTMLElement        | null;
+    const pdfFrame      = document.getElementById("gisPdfFrame")   as HTMLIFrameElement  | null;
+    const pdfLink       = document.getElementById("gisPdfLink")    as HTMLAnchorElement  | null;
+    if (!modal || !modalImg || !modalTitle || !modalAnalysis) return;
+
+    type Slide = { src: string; caption: string };
+    let slides: Slide[] = [];
+    let idx = 0;
+
+    function goTo(i: number) {
+      idx = i;
+      modalImg!.src = slides[i].src;
+      modalImg!.alt = slides[i].caption;
+      if (caption) caption.textContent = slides[i].caption;
+      if (prevBtn) prevBtn.hidden = (i === 0);
+      if (nextBtn) nextBtn.hidden = (i === slides.length - 1);
+    }
+
+    document.querySelectorAll<HTMLElement>(".map-card[data-slug]").forEach(card => {
+      card.addEventListener("click", () => {
+        modalTitle!.textContent = card.dataset.title ?? "";
+
+        // analysis paragraphs
+        modalAnalysis!.innerHTML = "";
+        const rawAnalysis = card.dataset.analysis;
+        if (rawAnalysis) {
+          const paras = JSON.parse(rawAnalysis) as string[];
+          paras.forEach(p => {
+            const el = document.createElement("p");
+            el.textContent = p;
+            modalAnalysis!.appendChild(el);
+          });
+        }
+
+        const pdf = card.dataset.pdf;
+        if (pdf) {
+          // PDF mode: hide image panel, show iframe
+          if (imgWrap) imgWrap.hidden = true;
+          if (pdfWrap) pdfWrap.hidden = false;
+          if (pdfFrame) pdfFrame.src = pdf;
+          if (caption) caption.textContent = "";
+          if (pdfLink) { pdfLink.href = pdf; pdfLink.hidden = false; }
+        } else {
+          // Image mode: hide pdf panel, show image carousel
+          if (imgWrap) imgWrap.hidden = false;
+          if (pdfWrap) pdfWrap.hidden = true;
+          if (pdfFrame) pdfFrame.src = "";
+          if (pdfLink) pdfLink.hidden = true;
+
+          const rawImages = card.dataset.images;
+          if (rawImages) {
+            slides = JSON.parse(rawImages) as Slide[];
+          } else {
+            slides = [{ src: card.dataset.img ?? "", caption: card.dataset.title ?? "" }];
+          }
+          goTo(0);
+        }
+
+        modal!.showModal();
+      });
+    });
+
+    prevBtn?.addEventListener("click", () => { if (idx > 0) goTo(idx - 1); });
+    nextBtn?.addEventListener("click", () => { if (idx < slides.length - 1) goTo(idx + 1); });
+    modal.addEventListener("click", e => { if (e.target === modal) modal.close(); });
+  });
+</script>
+
+<style>
+  /* ── Hero ── */
+  .gis-hero {
+    padding: 72px 0 56px;
+    border-top: 2px solid var(--text);
+    max-width: 680px;
+  }
+  .gis-heading {
+    font-family: "Playfair Display", serif;
+    font-size: clamp(40px, 7vw, 64px);
+    letter-spacing: -0.03em;
+    line-height: 1.06;
+    margin: 10px 0 16px;
+  }
+  .gis-sub {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--muted);
+    max-width: 52ch;
+    margin: 0;
+  }
+
+  /* ── Grid ── */
+  .map-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    padding-bottom: 80px;
+  }
+
+  /* ── Card ── */
+  .map-card {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--bg2);
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    padding: 0;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .map-card[data-slug]:hover {
+    border-color: var(--muted);
+    transform: translateY(-2px);
+  }
+
+  .map-img-wrap {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: rgba(255,255,255,0.05);
+    position: relative;
+  }
+  .map-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .map-card:hover .map-img { transform: scale(1.04); }
+
+  .map-count-badge {
+    position: absolute;
+    top: 10px; right: 10px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(4px);
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.88);
+    letter-spacing: 0.04em;
+    pointer-events: none;
+  }
+
+  /* pdf card placeholder */
+  .map-img-wrap--pdf {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(184, 48, 80, 0.04) 0px,
+      rgba(184, 48, 80, 0.04) 10px,
+      transparent 10px,
+      transparent 20px
+    );
+    border-bottom: 1px solid var(--border);
+  }
+  .pdf-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 6px 14px;
+    border-radius: 999px;
+    opacity: 0.72;
+  }
+
+  /* ── Card content ── */
+  .map-info {
+    padding: 18px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+  .map-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .map-desc {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--muted);
+    flex: 1;
+  }
+  .map-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 4px;
+  }
+  .map-tool {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  /* ── Modal ── */
+  .gis-modal::backdrop { background: rgba(0,0,0,0.65); }
+  .gis-modal {
+    border: none;
+    padding: 0;
+    border-radius: 18px;
+    width: min(1080px, 95vw);
+    max-height: 90vh;
+    overflow: hidden;
+    background: var(--bg1);
+    border: 1px solid var(--border);
+  }
+  .gis-modal-inner { margin: 0; padding: 0; position: relative; height: 100%; }
+
+  .gis-close {
+    position: absolute; right: 14px; top: 14px; z-index: 10;
+    width: 38px; height: 38px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  .gis-modal-body {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    height: 90vh;
+    max-height: 90vh;
+  }
+
+  /* Left: image */
+  .gis-modal-left {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg0);
+    border-right: 1px solid var(--border);
+  }
+  .gis-img-wrap {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+  }
+  .gis-modal-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+  .gis-nav {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--text);
+    font-size: 24px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.18s;
+    z-index: 2;
+  }
+  .gis-nav[hidden] { display: none; }
+  .gis-nav:hover   { background: var(--bg1); }
+  .gis-nav--prev   { left: 10px; }
+  .gis-nav--next   { right: 10px; }
+
+  /* PDF embed panel */
+  .gis-pdf-wrap {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .gis-pdf-frame {
+    flex: 1;
+    width: 100%;
+    border: none;
+    display: block;
+  }
+
+  /* caption row (shared by image caption + pdf link) */
+  .gis-caption-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    padding: 0 18px;
+    min-height: 42px;
+  }
+  .gis-caption {
+    margin: 0;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--muted);
+    flex: 1;
+  }
+  .gis-pdf-link {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: opacity 0.18s;
+  }
+  .gis-pdf-link:hover { opacity: 0.72; }
+  .gis-pdf-link[hidden] { display: none; }
+
+  /* Right: text (scrollable) */
+  .gis-modal-right {
+    overflow-y: auto;
+    padding: 36px 32px 36px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .gis-modal-right::-webkit-scrollbar { width: 4px; }
+  .gis-modal-right::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .gis-modal-title {
+    margin: 0 0 20px;
+    font-family: "Playfair Display", serif;
+    font-size: 22px;
+    line-height: 1.25;
+    padding-right: 32px;
+    color: var(--text);
+  }
+  .gis-modal-analysis p {
+    margin: 0 0 14px;
+    font-size: 13.5px;
+    line-height: 1.78;
+    color: var(--text);
+    opacity: 0.82;
+  }
+  .gis-modal-analysis p:last-child { margin-bottom: 0; }
+
+  @media (max-width: 780px) {
+    .gis-modal-body  { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: auto; max-height: 90vh; overflow-y: auto; }
+    .gis-modal-left  { border-right: none; border-bottom: 1px solid var(--border); }
+    .gis-img-wrap    { min-height: 240px; }
+    .map-grid        { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .map-grid { grid-template-columns: 1fr; }
+  }
+</style>
