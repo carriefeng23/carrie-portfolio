@@ -20,18 +20,6 @@ const { title = "Carrie Feng" } = Astro.props;
 
     <ClientRouter />
 
-    <script is:inline>
-      (function () {
-        const saved = localStorage.getItem("theme");
-        const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
-        const theme = saved ?? (prefersLight ? "light" : "dark");
-        if (theme === "light") {
-          document.documentElement.classList.add("light");
-        } else {
-          document.documentElement.classList.remove("light");
-        }
-      })();
-    </script>
   </head>
   <body>
     <div class="topbar-outer" id="topbarOuter">
@@ -50,7 +38,6 @@ const { title = "Carrie Feng" } = Astro.props;
         <div class="icon-row">
           <a class="icon-btn" href="https://www.linkedin.com/in/carrie-feng23" target="_blank" rel="noopener" aria-label="LinkedIn">in</a>
           <a class="icon-btn" href="/resume.pdf" target="_blank" rel="noopener" aria-label="Resume">CV</a>
-          <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">☾</button>
         </div>
       </header>
     </div>
@@ -64,20 +51,6 @@ const { title = "Carrie Feng" } = Astro.props;
     <script>
       // Re-runs on every ClientRouter page transition
       document.addEventListener('astro:page-load', () => {
-        // Theme toggle
-        const btn = document.getElementById("themeToggle") as HTMLButtonElement | null;
-        if (btn) {
-          const syncIcon = () => {
-            btn.textContent = document.documentElement.classList.contains("light") ? "☾" : "☀︎";
-          };
-          syncIcon();
-          btn.onclick = () => {
-            const isLight = document.documentElement.classList.toggle("light");
-            localStorage.setItem("theme", isLight ? "light" : "dark");
-            syncIcon();
-          };
-        }
-
         // Scroll reveal via IntersectionObserver
         const observer = new IntersectionObserver(
           (entries) => {

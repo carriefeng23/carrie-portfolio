@@ -33,20 +33,11 @@ const year = project.data.publishDate.getFullYear();
     </header>
 
     <!-- Hero media -->
-    {project.data.embedUrl ? (
-      <div class="embed-frame reveal reveal-d2">
-        <iframe
-          src={project.data.embedUrl}
-          title={project.data.title}
-          loading="lazy"
-          allow="fullscreen"
-        ></iframe>
-      </div>
-    ) : project.data.cover ? (
+    {project.data.cover && (
       <div class="case-cover reveal reveal-d2">
         <img src={project.data.cover} alt={project.data.title} />
       </div>
-    ) : null}
+    )}
 
     {project.data.liveUrl && (
       <p class="case-live reveal reveal-d3">
@@ -160,5 +151,27 @@ const year = project.data.publishDate.getFullYear();
     text-decoration: underline;
     text-underline-offset: 3px;
     opacity: 0.9;
+  }
+
+  /* Screenshot demo gallery */
+  :global(.demo-shot) {
+    margin: 40px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  :global(.demo-shot img) {
+    width: 100%;
+    display: block;
+    height: auto;
+  }
+  :global(.demo-caption) {
+    font-size: 13px !important;
+    opacity: 0.5 !important;
+    padding: 10px 14px;
+    margin: 0 !important;
+    border-top: 1px solid var(--border);
+    font-style: italic;
+    letter-spacing: 0.01em;
   }
 </style>

@@ -8,7 +8,7 @@
     if (!document.getElementById('cc-style')) {
       const s = document.createElement('style');
       s.id = 'cc-style';
-      s.textContent = '*{cursor:none!important}';
+      s.textContent = '*{cursor:none!important} dialog,dialog *{cursor:auto!important}';
       document.head.appendChild(s);
     }
   }
@@ -128,9 +128,8 @@
       if (!ctx) return;
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-      // Faster cursor follow
-      curX = lerp(curX, mx, 0.22);
-      curY = lerp(curY, my, 0.22);
+      curX = lerp(curX, mx, 0.62);
+      curY = lerp(curY, my, 0.62);
 
       rot += 0.045;
       // Grow slowly, shrink quickly
