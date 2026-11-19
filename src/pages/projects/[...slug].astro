@@ -146,6 +146,25 @@ const year = project.data.publishDate.getFullYear();
     margin: 48px 0;
   }
   .project-content strong { opacity: 1; color: var(--text); }
+
+  /* Tables inside case studies */
+  :global(.project-content table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 24px;
+    font-size: 14px;
+  }
+  :global(.project-content th),
+  :global(.project-content td) {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  :global(.project-content th) { font-weight: 600; opacity: 0.9; }
+  :global(.project-content td) { opacity: 0.8; }
+  @media (max-width: 640px) {
+    :global(.project-content table) { display: block; overflow-x: auto; }
+  }
   .project-content a {
     color: var(--text);
     text-decoration: underline;

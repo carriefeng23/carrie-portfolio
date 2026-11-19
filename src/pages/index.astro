@@ -4,8 +4,8 @@ import { getCollection } from "astro:content";
 import CootieKatcher from "../components/CootieKatcher.astro";
 
 const allProjects = await getCollection("projects");
-// Hand-pick the two strongest case studies for the homepage preview
-const featuredSlugs = ["meal-lottery", "obesity-decisiontree"];
+// Hand-pick the strongest case studies for the homepage preview
+const featuredSlugs = ["climate-risk-factor", "meal-lottery", "obesity-decisiontree"];
 const featured = featuredSlugs
   .map((s) => allProjects.find((p) => p.slug === s))
   .filter(Boolean);
@@ -21,7 +21,7 @@ const featured = featuredSlugs
         Carrie<br />Feng
       </h1>
 
-      <p class="hero-tagline">I tell stories through models, dashboards, and maps.</p>
+      <p class="hero-tagline">I use models, dashboards, and maps to make environmental risk measurable.</p>
 
       <div class="hero-bottom">
          
@@ -29,6 +29,7 @@ const featured = featuredSlugs
         <div class="hero-side">
           <div class="pills">
             <span class="pill">Data Analytics</span>
+            <span class="pill">Quantitative Modeling</span>
             <span class="pill">Climate & Sustainability</span>
             
           </div>
@@ -48,8 +49,8 @@ const featured = featuredSlugs
   <!-- ── Marquee ────────────────────────────────────────────── -->
   <div class="marquee-wrap" aria-hidden="true">
     <div class="marquee-track">
-      <span class="marquee-text">DATA ANALYTICS &nbsp;·&nbsp; BRAND TRANSPARENCY &nbsp;·&nbsp; CERAMICS &nbsp;·&nbsp; SUSTAINABILITY &nbsp;·&nbsp; PHOTOGRAPHY &nbsp;·&nbsp; MACHINE LEARNING &nbsp;·&nbsp; ENVIRONMENTAL ANALYSIS &nbsp;·&nbsp; R &nbsp;·&nbsp; PYTHON &nbsp;·&nbsp; GIS &nbsp;·&nbsp; BARNARD COLLEGE &nbsp;·&nbsp; DATA VIZ &nbsp;·&nbsp; ESG &nbsp;·&nbsp;</span>
-      <span class="marquee-text">DATA ANALYTICS &nbsp;·&nbsp; BRAND TRANSPARENCY &nbsp;·&nbsp; CERAMICS &nbsp;·&nbsp; SUSTAINABILITY &nbsp;·&nbsp; PHOTOGRAPHY &nbsp;·&nbsp; MACHINE LEARNING &nbsp;·&nbsp; ENVIRONMENTAL ANALYSIS &nbsp;·&nbsp; R &nbsp;·&nbsp; PYTHON &nbsp;·&nbsp; GIS &nbsp;·&nbsp; BARNARD COLLEGE &nbsp;·&nbsp; DATA VIZ &nbsp;·&nbsp; ESG &nbsp;·&nbsp;</span>
+      <span class="marquee-text">DATA ANALYTICS &nbsp;·&nbsp; QUANTITATIVE MODELING &nbsp;·&nbsp; CLIMATE RISK &nbsp;·&nbsp; BRAND TRANSPARENCY &nbsp;·&nbsp; CERAMICS &nbsp;·&nbsp; SUSTAINABILITY &nbsp;·&nbsp; PHOTOGRAPHY &nbsp;·&nbsp; MACHINE LEARNING &nbsp;·&nbsp; FACTOR MODELS &nbsp;·&nbsp; ENVIRONMENTAL ANALYSIS &nbsp;·&nbsp; R &nbsp;·&nbsp; PYTHON &nbsp;·&nbsp; GIS &nbsp;·&nbsp; BARNARD COLLEGE &nbsp;·&nbsp; DATA VIZ &nbsp;·&nbsp; ESG &nbsp;·&nbsp;</span>
+      <span class="marquee-text">DATA ANALYTICS &nbsp;·&nbsp; QUANTITATIVE MODELING &nbsp;·&nbsp; CLIMATE RISK &nbsp;·&nbsp; BRAND TRANSPARENCY &nbsp;·&nbsp; CERAMICS &nbsp;·&nbsp; SUSTAINABILITY &nbsp;·&nbsp; PHOTOGRAPHY &nbsp;·&nbsp; MACHINE LEARNING &nbsp;·&nbsp; FACTOR MODELS &nbsp;·&nbsp; ENVIRONMENTAL ANALYSIS &nbsp;·&nbsp; R &nbsp;·&nbsp; PYTHON &nbsp;·&nbsp; GIS &nbsp;·&nbsp; BARNARD COLLEGE &nbsp;·&nbsp; DATA VIZ &nbsp;·&nbsp; ESG &nbsp;·&nbsp;</span>
     </div>
   </div>
 
@@ -61,7 +62,7 @@ const featured = featuredSlugs
     </div>
 
     <div class="featured-list">
-      {/* Meal Lottery */}
+      {/* Pricing Climate Risk */}
       {featured[0] && (
         <a class="featured-row reveal" href={`/projects/${featured[0].slug}`} style="transition-delay: 0s">
           <div class="featured-img-wrap">
@@ -82,22 +83,9 @@ const featured = featuredSlugs
         </a>
       )}
 
-      {/* GIS — standalone page */}
-      <a class="featured-row reveal" href="/gis" style="transition-delay: 0.1s">
-        <div class="featured-img-wrap">
-          <img src="/images/gis-cover.png" alt="GIS & Spatial Analysis" loading="lazy" />
-        </div>
-        <div class="featured-info">
-          <p class="featured-tags">QGIS · Spatial Analysis · Census Data · 2025–2026</p>
-          <h3 class="featured-title">GIS & Spatial Analysis</h3>
-          <p class="featured-desc">Maps built with QGIS and open datasets: poverty distribution, park access, subway equity, hurricane damage, and more.</p>
-          <span class="featured-cta">View all maps →</span>
-        </div>
-      </a>
-
-      {/* Beyond BMI */}
+      {/* Meal Lottery */}
       {featured[1] && (
-        <a class="featured-row reveal" href={`/projects/${featured[1].slug}`} style="transition-delay: 0.2s">
+        <a class="featured-row reveal" href={`/projects/${featured[1].slug}`} style="transition-delay: 0.1s">
           <div class="featured-img-wrap">
             {featured[1].data.cover
               ? <img src={featured[1].data.cover} alt={featured[1].data.title} loading="lazy" />
@@ -111,6 +99,40 @@ const featured = featuredSlugs
             <h3 class="featured-title">{featured[1].data.title}</h3>
             <p class="featured-desc">{featured[1].data.description}</p>
             {featured[1].data.outcome && <p class="featured-outcome">{featured[1].data.outcome}</p>}
+            <span class="featured-cta">View case study →</span>
+          </div>
+        </a>
+      )}
+
+      {/* GIS — standalone page */}
+      <a class="featured-row reveal" href="/gis" style="transition-delay: 0.2s">
+        <div class="featured-img-wrap">
+          <img src="/images/gis-cover.png" alt="GIS & Spatial Analysis" loading="lazy" />
+        </div>
+        <div class="featured-info">
+          <p class="featured-tags">QGIS · Spatial Analysis · Census Data · 2025–2026</p>
+          <h3 class="featured-title">GIS & Spatial Analysis</h3>
+          <p class="featured-desc">Maps built with QGIS and open datasets: poverty distribution, park access, subway equity, hurricane damage, and more.</p>
+          <span class="featured-cta">View all maps →</span>
+        </div>
+      </a>
+
+      {/* Beyond BMI */}
+      {featured[2] && (
+        <a class="featured-row reveal" href={`/projects/${featured[2].slug}`} style="transition-delay: 0.3s">
+          <div class="featured-img-wrap">
+            {featured[2].data.cover
+              ? <img src={featured[2].data.cover} alt={featured[2].data.title} loading="lazy" />
+              : <span class="featured-img-placeholder">{featured[2].data.title}</span>
+            }
+          </div>
+          <div class="featured-info">
+            <p class="featured-tags">
+              {[...featured[2].data.tags.slice(0, 3), String(featured[2].data.publishDate.getFullYear())].join(" · ")}
+            </p>
+            <h3 class="featured-title">{featured[2].data.title}</h3>
+            <p class="featured-desc">{featured[2].data.description}</p>
+            {featured[2].data.outcome && <p class="featured-outcome">{featured[2].data.outcome}</p>}
             <span class="featured-cta">View case study →</span>
           </div>
         </a>
@@ -159,15 +181,11 @@ const featured = featuredSlugs
       </div>
       <div class="home-bio-text">
         <p>
-          I'm studying Information Science and Environmental Analysis at Barnard College in New York City.
-          Growing up in Hong Kong, where dense urban life and nature are always intertwined, shaped my
-          interest in environmental data and justice, GIS has since added a spatial dimension to those
-          questions. I mostly work in Python, R, Tableau, Figma, and ArcGIS.
-        </p>
-        <p>
-          Outside of class, I'm usually behind a camera, running at Riverside Park, at a pottery wheel, or somewhere I haven't been
-          before. I'm a hands-on person who finds a lot of inspiration in everyday life, whether it's wandering through
-          galleries and exhibitions, trying new restaurants, or just being out in the city. Feel free to ask me for NYC recommendations!
+          I am a senior at Barnard College studying Information Science and Environmental Analysis, and I
+          grew up in Hong Kong. I like problems where data, risk, and the environment meet, and I am
+          building the math and statistics to study them more rigorously, with quantitative finance as my
+          next step. Outside of class, I run, hike, play piano, make pottery, shoot film photography, and
+          keep a food blog. I also enjoy chess and poker for the probability and strategy.
         </p>
       </div>
     </div>
@@ -179,10 +197,10 @@ const featured = featuredSlugs
       <p class="kicker">Let's connect</p>
       <h2 class="cta-heading">Open to opportunities</h2>
       <p class="cta-sub">
-        I'm looking for roles in data analytics, sustainability, and
-        environmental research. If you're working on something that could use
-        a data-driven perspective, I'd love to hear about it — or if you just want to
-        chat and need a good NYC restaurant recommendation, I'm here for that too!!
+        I am looking for roles in data analytics, climate risk, and sustainability, and I plan to pursue
+        graduate study in quantitative finance. I am interested in work where quantitative analysis
+        supports decisions about environmental and financial risk. If you are working on a related
+        problem, or would like to talk about my projects, please get in touch.
       </p>
       <div class="cta-actions">
         <a href="/contact" class="btn-primary">Get in touch</a>
@@ -219,6 +237,7 @@ const featured = featuredSlugs
     );
   }
   .pills { flex-wrap: nowrap; }
+  @media (max-width: 640px) { .pills { flex-wrap: wrap; } }
   .pill { white-space: nowrap; }
   .hero-bottom { border-top: none; padding-top: 0; }
 
